@@ -1,0 +1,18 @@
+# Python cache    
+*.pyc
+
+# Proyect .exe converter
+Main.spec
+build/
+dict/
+.exe/
+
+# Sprites / Sounds / Fonts stuff (leave only the code)
+sounds/
+sprites/
+
+# Save file
+files/utils.txt
+files/save/key.py
+public.pem
+icon.ico
