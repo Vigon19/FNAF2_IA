@@ -16,7 +16,7 @@ class App:
 	def __init__(self, initial_dimentions=(1024, 768), caption="Five Nights at Freddy's - made with pygame"):
 		self.playing = True
 		self.loaded = False
-
+		self.ia_contol=False
 		# Surface init
 		pygame.init() # Starts the pygame timer
 		pygame.mixer.init() # Init the mixer
@@ -33,6 +33,7 @@ class App:
 		self.frames_per_second = 60
 
 		self.warning_init = WarningInit(self)
+		self.introduccion_proyecto = pygame.image.load("sprites/menu/logos/intro_proyecto.png").convert_alpha()
 		self.inital_warning = pygame.image.load("sprites/menu/logos/4.png").convert_alpha()
 		self.update(self)
 		
