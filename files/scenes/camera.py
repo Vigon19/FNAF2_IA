@@ -98,13 +98,19 @@ class Camera:
                 self.camera_buttons[i].sprite = App.assets.room_button_selected
             else:
                 self.camera_buttons[i].sprite = App.assets.room_button_unselected
+           
+            if App.ia_control is False:
+                if self.camera_buttons[i].mouse_hovered and pygame.mouse.get_pressed()[0]:
+                    if not i+1 == self.inCameraRoom:
+                        self.static_animation = True
 
-            if self.camera_buttons[i].mouse_hovered and pygame.mouse.get_pressed()[0]:
-                if not i+1 == self.inCameraRoom:
-                    self.static_animation = True
+                    self.inCameraRoom = i+1
+            else:
+                if App.ia.num_camera is not -1:
+                    if not App.ia.num_camera == self.inCameraRoom:
+                        self.static_animation = True
 
-                self.inCameraRoom = i+1
-
+                    self.inCameraRoom = App.ia.num_camera
             App.surface.blit(App.assets.room_buttons_labels[i], (
                 self.camera_buttons_positions[i][0] + button_dims[0]/2 + 5 , self.camera_buttons_positions[i][1] + button_dims[1]/2 + 7
             ))
@@ -260,21 +266,30 @@ class Camera:
             App.animations.static_anim_1.alpha = 100
 
             surface_id = surface_id_off
-
-            if flashlight_collide or ctrl_clicked:
-                if mouse_click[0] or ctrl_clicked:
-                    if surface_id_on:
-                        surface_id = surface_id_on
-                        self.camera_flashlighting = True
-
+            if App.ia_control is False:
+                if flashlight_collide or ctrl_clicked:
+                    if mouse_click[0] or ctrl_clicked:
+                        if surface_id_on:
+                            surface_id = surface_id_on
+                            self.camera_flashlighting = True
+            else:
+                if App.ia.hallway or App.ia.right_vent:
+                     if surface_id_on:
+                            surface_id = surface_id_on
+                            self.camera_flashlighting = True
             App.surface.blit(cameras_list[surface_id], (self.cameras_x_position[index], 0))
         else:
             App.animations.static_anim_1.alpha = 255
 
         # Flashlighting detection
-        if not ( (flashlight_collide and mouse_click[0]) or ctrl_clicked ) and not self.occupied_camera[index]:
-            surface_id = surface_id_off
-            self.camera_flashlighting = False
+        if App.ia_control is False:
+            if not ( (flashlight_collide and mouse_click[0]) or ctrl_clicked ) and not self.occupied_camera[index]:
+                surface_id = surface_id_off
+                self.camera_flashlighting = False
+        else:
+            if not ( App.ia.hallway is False ) and not self.occupied_camera[index]:
+                surface_id = surface_id_off
+                self.camera_flashlighting = False
 
     # Normal
     def party_room_1(self, App):

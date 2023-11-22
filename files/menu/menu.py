@@ -329,6 +329,7 @@ class Menu:
                 App.animations = animations_init(App)
                 App.objects = GameObjects(App)
                 App.game = Game(App)
+                
             case 10: 
                 # Init objects for custom night menu
                 App.surface.fill((0, 0, 0))

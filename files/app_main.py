@@ -10,13 +10,12 @@ from files.game.game_controller import Game
 from files.menu.menu import Menu
 from files.save.save import save, read
 from files.menu.warning_init import WarningInit
-
-
+from files.modoIA.modoIA import MODO_IA
 class App:
 	def __init__(self, initial_dimentions=(1024, 768), caption="Five Nights at Freddy's - made with pygame"):
 		self.playing = True
 		self.loaded = False
-		self.ia_contol=False
+		self.ia_control=True
 		# Surface init
 		pygame.init() # Starts the pygame timer
 		pygame.mixer.init() # Init the mixer
@@ -52,7 +51,7 @@ class App:
 		self.objects:GameObjects = None
 		self.game:Game = None
 		self.menu:Menu = None
-
+		self.ia:MODO_IA = None
 		self.loaded = True
 
 	def get_deltatime(self):

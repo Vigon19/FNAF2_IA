@@ -9,19 +9,19 @@ class CameraButton:
         self.camera_being_pressed = False
         self.quitting_camera = False
         self.entering_camera = False
-
+        self.hover_camera = self.monitor_button.mouse_hovered  if App.ia_control is False else App.ia.open_monitor
     def update(self, App, canInteract=True):
 
         self.monitor_button.update(App.surface, App.mouse_hitbox)
         if canInteract or not App.objects.mask_button.entering_mask:
             if App.objects.battery.charge == 0 or App.objects.office.animatronic_in_office:
                 self.quitting_camera = True
-                if self.monitor_button.mouse_hovered:
+                if self.hover_camera:
                     if not self.camera_being_pressed:
                         App.assets.error_sound.play()
                         self.camera_being_pressed = True
-                else:
-                    self.camera_being_pressed = False
+                    else:
+                        self.camera_being_pressed = False
 
         if self.inCamera and not self.quitting_camera:
             # Force quit mask
@@ -33,7 +33,6 @@ class CameraButton:
 
         if App.animations.monitor.sprite_num == 0 and self.quitting_camera:
             self.quitting_camera = False
-        
         self.animation(App, canInteract=canInteract)
         print(self.entering_camera)
         
@@ -41,7 +40,7 @@ class CameraButton:
     def animation(self, App, canInteract=True):
         # Monitor animation
         if not self.inCamera:
-            if (self.monitor_button.mouse_hovered and canInteract) or self.entering_camera:
+            if (self.hover_camera and canInteract) or self.entering_camera:
                 if not self.camera_being_pressed:
                     self.entering_camera = True
                     App.animations.monitor.update(App.surface)
@@ -60,7 +59,7 @@ class CameraButton:
                 self.camera_being_pressed = False
                 
         else:
-            if self.monitor_button.mouse_hovered or self.quitting_camera:
+            if self.hover_camera or self.quitting_camera:
                 if not self.camera_being_pressed:
                     self.quitting_camera = True
 

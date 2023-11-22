@@ -22,6 +22,7 @@ class Office:
         self.timer = pygame.time.get_ticks()
         self.hallway_animatrionic_coyote_time = 0
 
+
     def update(self, App, canInteract=True, draw=True, animate=True):
         if self.animatronic_in_office:
             canInteract = False
@@ -109,16 +110,25 @@ class Office:
 
     def camera_movement(self, App):
         move_left, move_right = pygame.Rect(0, 0, 300, App.dimentions[1]), pygame.Rect(App.dimentions[0] - 300, 0, 300, App.dimentions[1])
-        
-        if App.mouse_hitbox.colliderect(move_left) and self.position[0] < 0:
-            self.position[0] += self.move_speed
-            if self.position[0] > 0:
-                self.position[0] = 0
-        if App.mouse_hitbox.colliderect(move_right) and self.position[0] > -abs(App.assets.office1.get_width() - App.dimentions[0]) :
-            self.position[0] -= self.move_speed
-            if self.position[0] < -abs(App.assets.office1.get_width() - App.dimentions[0]) :
-                self.position[0] = -abs(App.assets.office1.get_width() - App.dimentions[0])
+        if App.ia_control is False:
+            if App.mouse_hitbox.colliderect(move_left) and self.position[0] < 0:
+                self.position[0] += self.move_speed
+                if self.position[0] > 0:
+                    self.position[0] = 0
+            if App.mouse_hitbox.colliderect(move_right) and self.position[0] > -abs(App.assets.office1.get_width() - App.dimentions[0]) :
+                self.position[0] -= self.move_speed
+                if self.position[0] < -abs(App.assets.office1.get_width() - App.dimentions[0]) :
+                    self.position[0] = -abs(App.assets.office1.get_width() - App.dimentions[0])
+        else:
+            if App.ia.turn_to_left and self.position[0] < 0:
+                        self.position[0] += self.move_speed
+                        if self.position[0] > 0:
+                            self.position[0] = 0
 
+            if App.ia.turn_to_right and self.position[0] > -abs(App.assets.office1.get_width() - App.dimentions[0]):
+                        self.position[0] -= self.move_speed
+                        if self.position[0] < -abs(App.assets.office1.get_width() - App.dimentions[0]):
+                            self.position[0] = -abs(App.assets.office1.get_width() - App.dimentions[0])            
     def hallway_interact(self, App):
         baloon_boy = App.objects.Animatronics.animatronics_in_game["BALOON_BOY"]
         hallway_rect = pygame.Rect(self.position[0] + 560, 200, 490, 370)
@@ -133,26 +143,43 @@ class Office:
         # Mouse click 
         mouse_click = pygame.mouse.get_pressed()
         ctrl_clicked = pygame.key.get_pressed()[pygame.K_LCTRL]
-        
+        print(f"App.ia {App.ia_control} ")
         cannot_interact = self.occupied_office[0] or App.objects.battery.charge == 0
+        if App.ia_control is False:
+            if hallway_collide or ctrl_clicked:
+                if mouse_click[0] or ctrl_clicked:
+                    if not (cannot_interact or App.objects.battery.charge == 0  or baloon_boy.locationId == -1):
+                        self.hallway_on = True
 
-        if hallway_collide or ctrl_clicked:
-            if mouse_click[0] or ctrl_clicked:
-                if not (cannot_interact or App.objects.battery.charge == 0  or baloon_boy.locationId == -1):
-                    self.hallway_on = True
+                    else:
+                        # Make an error sound
+                        self.hallway_on = False
+                        if not self.attempting_hallway_interact:
+                            App.assets.error_sound.play()
 
-                else:
-                    # Make an error sound
-                    self.hallway_on = False
-                    if not self.attempting_hallway_interact:
-                        App.assets.error_sound.play()
+                    
+            if (not hallway_collide or not mouse_click[0]) and not ctrl_clicked:
+                self.attempting_hallway_interact = False
+                self.hallway_on = False
 
-                self.attempting_hallway_interact = True
-                
-        if (not hallway_collide or not mouse_click[0]) and not ctrl_clicked:
-            self.attempting_hallway_interact = False
-            self.hallway_on = False
+        else:
+            if App.ia.hallway:
+                    if not (cannot_interact or App.objects.battery.charge == 0  or baloon_boy.locationId == -1):
+                        self.hallway_on = True
+                        # App.ia.hallway=False
+                    else:
+                        # Make an error sound
+                        self.hallway_on = False
+                        if not self.attempting_hallway_interact:
+                            App.assets.error_sound.play()
 
+                    if App.ia.hallway is False:
+                        self.attempting_hallway_interact = False
+                        self.hallway_on = False
+
+        self.attempting_hallway_interact = True
+
+       
     def right_vent_interact(self, App):
         baloon_boy = App.objects.Animatronics.animatronics_in_game["BALOON_BOY"]
         right_vent_rect = pygame.Rect(1450 + self.position[0], 390, 55, 60)
@@ -165,23 +192,38 @@ class Office:
             self.right_vent_button = App.assets.right_vent_button_on
         else: self.right_vent_button = App.assets.right_vent_button_off
 
-        if colliding_button:
-            if mouse_click[0]:
-                if not (self.occupied_office[1] or App.objects.battery.charge == 0  or baloon_boy.locationId == -1):
-                    self.office_sprite = App.assets.right_vent_offices[self.get_flashed_right_vent(App)]
-                    self.right_vent_on = True
-                else:
-                    self.right_vent_on = False
-                    # Make an error sound
-                    if not self.attempting_right_vent_interact:
-                        App.assets.error_sound.play()
-                    
-                self.attempting_right_vent_interact = True
+        if App.ia_control is False:
+            if colliding_button:
+                if mouse_click[0]:
+                    if not (self.occupied_office[1] or App.objects.battery.charge == 0  or baloon_boy.locationId == -1):
+                        self.office_sprite = App.assets.right_vent_offices[self.get_flashed_right_vent(App)]
+                        self.right_vent_on = True
+                    else:
+                        self.right_vent_on = False
+                        # Make an error sound
+                        if not self.attempting_right_vent_interact:
+                            App.assets.error_sound.play()
+                        
+                    self.attempting_right_vent_interact = True
 
-        if not colliding_button or not mouse_click[0]:
-            self.right_vent_on = False
-            self.attempting_right_vent_interact = False
-
+            if not colliding_button or not mouse_click[0]:
+                self.right_vent_on = False
+                self.attempting_right_vent_interact = False
+        else:
+            if App.ia.right_vent:
+                if self.position[0]< -300:
+                    if not (self.occupied_office[1] or App.objects.battery.charge == 0  or baloon_boy.locationId == -1):
+                            self.office_sprite = App.assets.right_vent_offices[self.get_flashed_right_vent(App)]
+                            self.right_vent_on = True
+                    else:
+                        self.right_vent_on = False
+                         # Make an error sound
+                        if not self.attempting_right_vent_interact:
+                            App.assets.error_sound.play()
+                    self.attempting_right_vent_interact = True
+            if self.position[0]> -300 or  App.ia.right_vent is False:
+                self.right_vent_on = False
+                self.attempting_right_vent_interact = False   
         if not self.right_vent_on and not self.left_vent_on and not self.hallway_on:
             self.office_sprite = App.assets.office1
             
@@ -197,23 +239,39 @@ class Office:
             self.left_vent_button = App.assets.left_vent_button_on
         else: self.left_vent_button = App.assets.left_vent_button_off
 
-        if colliding_button:
-            if mouse_click[0]:
-                if not (self.occupied_office[2] or App.objects.battery.charge == 0  or baloon_boy.locationId == -1):
-                    self.office_sprite = App.assets.left_vent_offices[self.get_flashed_left_vent(App)]
-                    self.left_vent_on = True
-                else:
+        if App.ia_control is False:
+            if colliding_button:
+                if mouse_click[0]:
+                    if not (self.occupied_office[2] or App.objects.battery.charge == 0  or baloon_boy.locationId == -1):
+                        self.office_sprite = App.assets.left_vent_offices[self.get_flashed_left_vent(App)]
+                        self.left_vent_on = True
+                    else:
+                        self.left_vent_on = False
+                        # Make an error sound
+                        if not self.attempting_left_vent_interact:
+                            App.assets.error_sound.play()
+                        
+                    self.attempting_left_vent_interact = True
+
+            if not colliding_button or not mouse_click[0]:
+                self.left_vent_on = False
+                self.attempting_left_vent_interact = False
+        else:
+            if App.ia.left_vent:
+                if self.position[0]> -200:
+                     if not (self.occupied_office[2] or App.objects.battery.charge == 0  or baloon_boy.locationId == -1):
+                        self.office_sprite = App.assets.left_vent_offices[self.get_flashed_left_vent(App)]
+                        self.left_vent_on = True
+                     else:
+                        self.left_vent_on = False
+                        # Make an error sound
+                        if not self.attempting_left_vent_interact:
+                            App.assets.error_sound.play()
+                        
+                     self.attempting_left_vent_interact = True
+                if self.position[0]< -200 or  App.ia.left_vent is False:
                     self.left_vent_on = False
-                    # Make an error sound
-                    if not self.attempting_left_vent_interact:
-                        App.assets.error_sound.play()
-                    
-                self.attempting_left_vent_interact = True
-
-        if not colliding_button or not mouse_click[0]:
-            self.left_vent_on = False
-            self.attempting_left_vent_interact = False
-
+                    self.attempting_left_vent_interact = False
         if not self.left_vent_on and not self.hallway_on and not self.right_vent_on:
             self.office_sprite = App.assets.office1
 

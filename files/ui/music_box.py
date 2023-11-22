@@ -26,20 +26,33 @@ class MusicBoxButton:
         
 
         mouse_click = pygame.mouse.get_pressed()
-        if self.button.mouse_hovered:
-            if mouse_click[0]:
+        
+        if App.ia_control is False:
+            if self.button.mouse_hovered:
+                if mouse_click[0]:
+                    self.button.sprite = App.assets.music_box_button_on
+                    self.recharge_time(App)
+                    if not pygame.mixer.Channel(3).get_busy() and pygame.time.get_ticks() - self.timer_sound > 450:
+                        pygame.mixer.Channel(3).play(App.assets.charge)
+                        self.timer_sound = pygame.time.get_ticks()
+
+            if not self.button.mouse_hovered or not mouse_click[0]:
+                self.button.sprite = App.assets.music_box_button_off
+                if self.recharging_time:
+                    self.timer = pygame.time.get_ticks()
+                    self.recharging_time = False
+        else:
+            if App.ia.music_box:
                 self.button.sprite = App.assets.music_box_button_on
                 self.recharge_time(App)
                 if not pygame.mixer.Channel(3).get_busy() and pygame.time.get_ticks() - self.timer_sound > 450:
                     pygame.mixer.Channel(3).play(App.assets.charge)
                     self.timer_sound = pygame.time.get_ticks()
-
-        if not self.button.mouse_hovered or not mouse_click[0]:
-            self.button.sprite = App.assets.music_box_button_off
-            if self.recharging_time:
-                self.timer = pygame.time.get_ticks()
-                self.recharging_time = False
-
+            if App.ia.music_box is False:
+                self.button.sprite = App.assets.music_box_button_off
+                if self.recharging_time:
+                    self.timer = pygame.time.get_ticks()
+                    self.recharging_time = False
         if self.charge != 0:
             # Draw timer
             App.surface.blit(App.assets.music_box_timer_sprites[self.charge-1], [self.position[0] - 100, self.position[1]])
