@@ -33,7 +33,7 @@ class WarningInit:
             data = read(App)
 
             App.menu = Menu(App)
-            App.ia=MODO_IA()
+            
             if data:
                 App.menu.inNight = data["Night"]
                 App.menu.played_once = data["Played"]
@@ -41,3 +41,4 @@ class WarningInit:
                 App.menu.cutscenes_data = data["Cutscenes"]
                 App.menu.start_state=5
             self._finished = True
+            

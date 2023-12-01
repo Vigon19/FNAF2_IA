@@ -273,7 +273,7 @@ class Camera:
                             surface_id = surface_id_on
                             self.camera_flashlighting = True
             else:
-                if App.ia.hallway or App.ia.right_vent:
+                if App.ia.hallway or App.ia.right_vent or ctrl_clicked:
                      if surface_id_on:
                             surface_id = surface_id_on
                             self.camera_flashlighting = True

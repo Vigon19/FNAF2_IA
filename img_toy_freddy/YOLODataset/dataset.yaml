@@ -1,0 +1,4 @@
+train: img_toy_freddy/YOLODataset/train/
+val: img_toy_freddy/YOLODataset/val/
+nc: 1
+names: ["toy_freddy"]

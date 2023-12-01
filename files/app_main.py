@@ -79,6 +79,7 @@ class App:
 
 			self.update(events)
 
+
 	def game_events(self, events):
 		for event in events:
 			if event.type == QUIT:
@@ -91,7 +92,6 @@ class App:
 
 		# Draw on screen
 		dr.Draw(self)
-
 		# Update each frame
 		pygame.display.update()
 
