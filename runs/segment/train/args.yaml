@@ -1,8 +1,8 @@
 task: segment
 mode: train
 model: yolov8m-seg.pt
-data: /content/drive/MyDrive/dataset/dataset.yaml
-epochs: 100
+data: /content/drive/MyDrive/Colab_Notebooks/DATASET_V2/dataset.yaml
+epochs: 200
 patience: 50
 batch: 16
 imgsz: 640

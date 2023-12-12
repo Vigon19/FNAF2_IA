@@ -57,7 +57,6 @@ class Camera:
         self.record_spr_timer = pygame.time.get_ticks()
 
     def update(self, App):
-        print(self.occupied_camera)
         self.camera_room_managment(App)
 
         App.animations.static_stripes_animation.update(App)
@@ -257,7 +256,6 @@ class Camera:
             m = room_module()
             surface_id_off, surface_id_on = m
         except TypeError as e:
-            print(f"- Error in room {index + 1} - Error code: {e} - {m}")
             App.objects.Animatronics.console_animatrionic_position_log()
 
         

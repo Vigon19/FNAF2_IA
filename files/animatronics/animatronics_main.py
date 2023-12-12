@@ -46,7 +46,6 @@ class AnimatronicsMain:
 
                 anim_in_position_name += " - "
 
-            print(f"{keys[i]} : {anim_in_position_name}")
 
     def update_animatrionic_position(self):
         self.every_animatrionic_position = {

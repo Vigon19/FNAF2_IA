@@ -146,7 +146,6 @@ class Animatronic(ABC):
                 for aveliable_pos in self.aveliable_rooms_positions[room_location]:
                     found_match = False
                     for name in aveliable_pos:
-                        print(name)
                         if animatrionic.name_id == name:
                             found_match = True
                         else:

@@ -5,13 +5,11 @@ from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense, Flatten
 from ultralytics import YOLO
 import threading
-# from files.modoIA.gameEnv import GameEnv
 import matplotlib.pyplot as plt
 import pygame
 
-import pygame.locals
 class MODO_IA:
-    def __init__(self,App):
+    def __init__(self, App):
         self.turn_to_left = False
         self.turn_to_right = False
         self.hallway = False
@@ -19,46 +17,62 @@ class MODO_IA:
         self.left_vent = False
         self.open_monitor = True
         self.num_camera = 9
-        self.cascade_freddy= cv.CascadeClassifier('cascade/cascade.xml')
+        self.cascade_freddy = cv.CascadeClassifier('cascade/cascade.xml')
         self.put_mask = False
         self.music_box = True
         self.observation_bool = True
-        self.model = YOLO("runs/segment/train/weights/best.pt")
+        self.model = YOLO("runs/segment/train4/weights/best.pt")
         self.last_observation_time = pygame.time.get_ticks()
         self.detected_rect = None
-        self.label=""
-    def observation(self,surface):
-            current_time = pygame.time.get_ticks()
-            if current_time - self.last_observation_time >= 2000:
-                pygame.image.save(surface, "frame.png")
-                self.detection("frame.png")
-                self.last_observation_time = current_time
-                # if current_time - self.last_observation_time >= 4000:
-                #       self.num_camera = (self.num_camera + 1) if (self.num_camera < 11) else 0    
-                #       # Actualiza el tiempo de la última observación
-                #       self.last_observation_time = current_time
-           
-            self.draw_detection_box(surface)
-            
+        self.label = ""
+        self.names=[]
+    def observation(self, surface):
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_observation_time >= 2000:
+            self.names=[]
+            pygame.image.save(surface, "frame.png")
+            self.detection("frame.png")
+            self.last_observation_time = current_time
 
+        self.draw_detection_box(surface)
     def draw_detection_box(self, surface):
         if self.detected_rect is not None:
-            for box in self.detected_rect:
-                    b = box.tolist()
-                    x_min, y_min, x_max, y_max = map(int, b)
-                    print(f" x_min, y_min, x_max, y_max{ x_min, y_min, x_max, y_max}")
+            for r in self.detected_rect:
+                for i in range(len(r.boxes)):
+                    class_id = int(r.boxes.cls[i].numpy())
+                    confidence = r.boxes.conf[i].numpy()
+                    class_name = self.model.names[class_id]
+
+                    x_min, y_min, x_max, y_max = map(int, r.boxes.xyxy[i, :4].numpy())
+                    print(f"x_min, y_min, x_max, y_max: {x_min, y_min, x_max, y_max}")
+                    print(f"Class ID: {class_id}, Class Name: {class_name}, Confidence: {confidence}")
+
+                    # Dibujar el rectángulo
                     pygame.draw.rect(surface, (255, 0, 0), (x_min, y_min, x_max - x_min, y_max - y_min), 2)
-                        # Mostrar la etiqueta debajo del rectángulo
+
+                    # Mostrar la etiqueta debajo del rectángulo
                     font = pygame.font.Font(None, 36)
-                    label_text = font.render(self.label, True, (255, 255, 255))
+                    label_text = font.render(f"{class_name} {confidence:.2f}", True, (255, 255, 255))
                     surface.blit(label_text, (x_min, y_max + 5))  # Ajusta la posición según tus preferencias
+                    # boxes = item.boxes
+                    # for box in boxes:
+                    #     newbox=box.xyxy
+                    #     class_id = newbox[-1]
+                    #     conf = newbox[-2]
+                    #     class_name = self.model.names[int(class_id)]
+                    #     x_min, y_min, x_max, y_max =newbox[:4]
+                    #     print(f"x_min, y_min, x_max, y_max: {x_min, y_min, x_max, y_max}")
+
+                    #     # Mostrar la etiqueta debajo del rectángulo
+                    #     font = pygame.font.Font(None, 36)
+                    #     label_text = font.render(class_name, True, (255, 255, 255))
+                    #     surface.blit(label_text, (x_min, y_max + 5))  # Ajusta la posición según tus preferencias
+                    #     pygame.draw.rect(surface, (255, 0, 0), (x_min, y_min, x_max - x_min, y_max - y_min), 2)
+
     def detection(self, image_path):
-        names = self.model.names
-        results = self.model.predict(image_path,conf=0.8)
-        self.detected_rect = results[0].boxes.xyxy
-        for r in results:
-                for c in r.boxes.cls:
-                    self.label=names[int(c)]
+        results = self.model.predict(image_path, conf=0.8,save=True,show_labels=True,show_conf=True,save_txt=True,save_crop=False,line_width=2)
+        self.detected_rect = results
+
     # def observation(self,surface):
     #         current_time = pygame.time.get_ticks()
     #         if current_time - self.last_observation_time >= 2000:  # 5000 milliseconds = 5 seconds

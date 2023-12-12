@@ -1,0 +1,4 @@
+train: /content/drive/MyDrive/Colab_Notebooks/DATASET_V2/train
+val: /content/drive/MyDrive/Colab_Notebooks/DATASET_V2/val
+nc: 13
+names: ["withered_freddy", "toy_chica", "withered_bonnie", "endo-02", "shadow_freddy", "puppet", "withered_foxy", "golden_freddy", "mangle", "withered_chica", "toy_bonnie", "toy_freddy", "balloon_boy"]

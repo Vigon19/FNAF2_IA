@@ -34,7 +34,6 @@ class CameraButton:
         if App.animations.monitor.sprite_num == 0 and self.quitting_camera:
             self.quitting_camera = False
         self.animation(App, canInteract=canInteract)
-        print(self.entering_camera)
         
 
     def animation(self, App, canInteract=True):
