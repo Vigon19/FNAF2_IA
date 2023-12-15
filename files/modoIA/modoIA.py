@@ -1,11 +1,5 @@
 import cv2 as cv
-import gym
-import numpy as np
-from tensorflow.python.keras.models import Sequential
-from tensorflow.python.keras.layers import Dense, Flatten
 from ultralytics import YOLO
-import threading
-import matplotlib.pyplot as plt
 import pygame
 
 class MODO_IA:

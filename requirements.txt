@@ -1,8 +1,6 @@
-gym==0.26.2
 matplotlib==3.8.2
 numpy==1.26.2
 Pillow==10.1.0
 pygame==2.5.2
 rsa==4.9
-tensorflow==2.15.0
 ultralytics==8.0.221
