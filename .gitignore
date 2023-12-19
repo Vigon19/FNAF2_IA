@@ -8,8 +8,8 @@ dict/
 .exe/
 
 # Sprites / Sounds / Fonts stuff (leave only the code)
-sounds/
-sprites/
+# sounds/
+# sprites/
 
 # # Save file
 # files/utils.txt
