@@ -5,7 +5,7 @@ from files.game.game_controller import Game
 from files.animations.animations_init import animations_init
 from files.menu.custom_night import CustomNight
 from files.menu.cutscene import Cutscene
-from files.modoIA.modoIA import MODO_IA
+
 class Menu:
     def __init__(self, App): 
         self.option:int = 0 # What button is the mouse hovering
@@ -55,8 +55,8 @@ class Menu:
 
         self.cutscenes_data = [False, False, False, False]
 
-        self.inNight = 5
-        self.nightToPlay = 5
+        self.inNight = 3
+        self.nightToPlay = 3
 
         self.played_once = False
 
@@ -246,7 +246,7 @@ class Menu:
             self.show_newspaper(App)
         elif self.start_state >= 2:
             self.show_night(App)
-        App.ia = MODO_IA(App)
+
         
         
 

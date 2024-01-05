@@ -271,7 +271,7 @@ class Camera:
                             surface_id = surface_id_on
                             self.camera_flashlighting = True
             else:
-                if App.ia.hallway or App.ia.right_vent or ctrl_clicked:
+                if App.ia.flashlight:
                      if surface_id_on:
                             surface_id = surface_id_on
                             self.camera_flashlighting = True
@@ -285,7 +285,7 @@ class Camera:
                 surface_id = surface_id_off
                 self.camera_flashlighting = False
         else:
-            if not ( App.ia.hallway is False ) and not self.occupied_camera[index]:
+            if not ( App.ia.flashlight is False ) and not self.occupied_camera[index]:
                 surface_id = surface_id_off
                 self.camera_flashlighting = False
 

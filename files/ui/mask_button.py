@@ -8,7 +8,7 @@ class MaskButton:
         self.mask_being_pressed = False
         self.quitting_mask = False
         self.entering_mask = False
-        self.hover_mask = self.monitor_button.mouse_hovered  if App.ia_control is False else App.ia.put_mask
+        self.hover_mask = self.mask_button.mouse_hovered  if App.ia_control is False else App.ia.put_mask
     def update(self, App, canInteract=True):
         self.mask_button.update(App.surface, App.mouse_hitbox)
         if canInteract or not App.objects.open_monitor_button.entering_camera:

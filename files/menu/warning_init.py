@@ -21,6 +21,11 @@ class WarningInit:
             if keys[pygame.K_1]:
                 
                 self.finish(App)
+                App.ia_control=True
+                white_rect = pygame.Surface((600, 100), pygame.SRCALPHA)
+                white_rect.fill((255, 255, 255,200))
+                App.surface.blit(white_rect, ((424//2), 0))
+                App.ia=MODO_IA(App,white_rect)
             elif keys[pygame.K_2]:
                 self.finish(App)
         else:

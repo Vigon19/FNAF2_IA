@@ -35,9 +35,9 @@ class Game:
         self.sounds_shutted = False
         pygame.mixer.set_num_channels(self.num_of_channels)
 
-        pygame.mixer.music.set_volume(1)
-        pygame.mixer.Channel(1).set_volume(0.8)
-        pygame.mixer.Channel(2).set_volume(0) # Music box
+        pygame.mixer.music.set_volume(0.5)
+        pygame.mixer.Channel(1).set_volume(1)
+        pygame.mixer.Channel(2).set_volume(1) # Music box
         pygame.mixer.Channel(3).set_volume(1) # Sounds effects
         pygame.mixer.Channel(4).set_volume(1) # Mask breathing
         pygame.mixer.Channel(5).set_volume(1) # Stare at an animatrionic
@@ -67,8 +67,9 @@ class Game:
                 self.telephone.update(App, App.menu.nightToPlay)
 
         self.game_update(App)
-        App.ia.observation(App.surface)
-        (App.surface)
+        if App.ia_control is True:
+            App.ia.observation()
+            
         if (not App.objects.Animatronics.being_jumpscared and App.menu.nightToPlay != 7) and not self.night_beaten:
             self.telephone.update(App, App.menu.nightToPlay)
 

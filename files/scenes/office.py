@@ -143,7 +143,6 @@ class Office:
         # Mouse click 
         mouse_click = pygame.mouse.get_pressed()
         ctrl_clicked = pygame.key.get_pressed()[pygame.K_LCTRL]
-        print(f"App.ia {App.ia_control} ")
         cannot_interact = self.occupied_office[0] or App.objects.battery.charge == 0
         if App.ia_control is False:
             if hallway_collide or ctrl_clicked:
