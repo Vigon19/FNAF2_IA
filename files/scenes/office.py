@@ -28,7 +28,10 @@ class Office:
             canInteract = False
             #App.objects.open_monitor_button.inCamera = False
             App.objects.open_monitor_button.quitting_camera = True
-        
+            if App.ia_control:
+                App.ia.open_monitor=False
+                App.ia.in_office=True
+                
         if canInteract or self.animatronic_in_office:
             self.camera_movement(App)
 

@@ -1,0 +1,49 @@
+Toy Bonnie: Show Stage>Party Room 3>Party Room 4>Party Room 2>Right Air Vent (9>3>4>2>6>0)
+
+    Si se ve en la ventilacion poner mascara inmediatamente.
+
+Toy Chica: Show Stage>Main Hall>Party Room 4>Party Room 1>Left Air Vent (9>7>4>1>5>0)
+    Si se ve en la ventilacion poner mascara inmediatamente.
+
+Toy Freddy: Show Stage>Game Area> Office (9>10>0)
+    Se puede usar la mascara al bajar la camara para evitar que te ataque
+
+Mangle: Kid's Cove>Prize Corner>Right Air Vent (12>11>6>0)
+    Si se escucha y no se esta viendo poner la mascara inmediatamente
+
+Withered Chica: Parts & Service>Party Room 4>Party Room 2>Right Air Vent (8>4>2>6>0)
+    Si aparece en la oficina poner la mascara
+
+Withered Bonnie: Parts & Service>Main Hall> Party Room 1>Left Air Vent (8>7>1>5>0)
+    Si aparece en la oficina poner la mascara
+
+Withered Freddy: Parts & Service>Main Hall> Party Room 3 (8>7>3>0)
+    Si aparece en la oficina poner la mascara
+
+Withered Foxy  Parts & Service>Office hallway (8>0)
+    Aparecerá enfrente de la oficina, habrá que enfocarle con la linterna hasta que desaparezca
+    
+Baloon Boy (BB): Game Area>Left Air Vent (10>5>0)
+    Si aparece en la ventilacion no poner la mascara, atacará y desactivará la linterna
+
+Puppet (11>0)
+    Habrá que darle cuerda a la caja de música, si se pasa el tiempo de la caja de música se pierde la partida
+
+
+LOCALIZACIÓN     CÁMARA
+
+Party Room 1       1
+Party Room 2       2
+Party Room 3       3
+Party Room 4       4
+Left Air Vent      5
+Right Air Vent     6
+Main Hall          7
+Parts & Service    8
+Show Stage         9
+Game Area          10
+Prize Corner       11
+Kid's Cove         12
+
+
+

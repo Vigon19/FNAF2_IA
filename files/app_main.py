@@ -88,7 +88,7 @@ class App:
 				if self.warning_init.is_finished():
 					save(self)
 				if self.ia_control is True:
-					self.ia.detection_thread.join()
+					self.ia.stop_detection_thread()
 				self.playing = False
 				
 	def update(self, events):

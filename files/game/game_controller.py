@@ -155,4 +155,7 @@ class Game:
 
             App.objects.mask_button.update(App, canInteract=False)
             App.objects.mask_button.quitting_mask = True
+            if App.ia_control:
+                App.ia.open_monitor=False
+                App.ia.put_mask=False
 
