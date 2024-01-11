@@ -6,8 +6,6 @@ from files.menu.night_beaten_animation import NightBeatenAnimation
 from files.menu.you_lost_animation import YouLostAnimation
 from files.game.night import NightAIChanger
 from files.game.telephone import Telephone
-from files.modoIA.ia_model import Trainer
-import time
 class Game:
     def __init__(self, App):
         self.gameOver = False
@@ -56,6 +54,8 @@ class Game:
             if i != 8:
                 pygame.mixer.Channel(i).stop()
 
+
+        
     def updater(self, App):
         if App.objects.gameTimer.time == 6:
             self.night_beaten = True
@@ -71,8 +71,7 @@ class Game:
         self.game_update(App)
         if App.ia_control is True:
             App.ia.draw_rects()
-            trainer = Trainer(App)
-            trainer.train_model()
+            
             
         if (not App.objects.Animatronics.being_jumpscared and App.menu.nightToPlay != 7) and not self.night_beaten:
             self.telephone.update(App, App.menu.nightToPlay)

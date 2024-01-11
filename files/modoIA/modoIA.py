@@ -32,7 +32,7 @@ class MODO_IA:
         self.last_observation_time = pygame.time.get_ticks()
         self.change_camera_time = pygame.time.get_ticks()
         self.open_monitor_time=pygame.time.get_ticks()
-        self.music_box_time=pygame.time.get_ticks()
+        
         self.current_time=pygame.time.get_ticks()
         self.label = ""
         self.names = []
@@ -48,6 +48,8 @@ class MODO_IA:
         self.actions_manager = ActionsManager(self)
         self.canInteract=True
         self.results = []
+        self.waiting_time=pygame.time.get_ticks()
+        self.waiting_time_exceeded=False
     def write_log(self):
         font_large = pygame.font.Font("five-nights-at-freddys.ttf", 36)
         font_small = pygame.font.Font("five-nights-at-freddys.ttf", 36)
@@ -131,7 +133,57 @@ class MODO_IA:
                                 font = pygame.font.Font("five-nights-at-freddys.ttf", 36)
                                 label_text = font.render(f"{class_name} {confidence:.2f}", True, (255, 255, 255))
                                 self.game_surface.blit(label_text, (x_min, y_max + 5))
-        
+    # def observation(self):      
+    #     self.current_time = pygame.time.get_ticks()
+    #     if self.current_time - self.open_monitor_time <= 20000:
+    #         self.log="CAMBIO AL MONITOR"
+    #         # Está en el monitor
+    #         self.open_monitor = True
+    #         if self.current_time - self.music_box_time >=10000:
+    #             self.num_camera=11
+    #             self.music_box_time= self.current_time
+    #             self.draw_detection_box()
+    #         else:
+    #             if self.current_time - self.change_camera_time >= 4000:
+    #                 # Cambiar de cámara cada 5 segundos en el monitor
+    #                 self.num_camera = random.randint(1, 12)
+    #                 self.draw_detection_box()
+    #                 self.change_camera_time = self.current_time
+
+    #     else:
+    #         self.log="CAMBIO AL HALL PRINCIPAL"
+    #         # Está en el hall
+    #         self.open_monitor = False
+    #         self.num_camera = 0
+    #         self.draw_detection_box()
+    #         self.hallway=True
+    #         if self.current_time - self.open_monitor_time <= 27000:
+    #             # Girar a la izquierda durante los primeros 5 segundos en el hall
+               
+    #             self.turn_to_left = True
+    #             self.turn_to_right = False
+    #             self.left_vent = True
+    #             self.right_vent = False
+
+    #         elif self.current_time - self.open_monitor_time <= 31000:
+    #             # Girar a la derecha durante los siguientes 5 segundos en el hall
+    #             self.turn_to_left = False
+    #             self.turn_to_right = True
+    #             self.left_vent = False
+    #             self.right_vent = True
+
+    #         elif self.current_time - self.open_monitor_time <= 33000:
+    #             self.turn_to_left = False
+    #             self.turn_to_right = False
+    #             self.left_vent = False
+    #             self.right_vent = False
+    #         elif self.current_time - self.open_monitor_time <= 35000:
+    #             # Reiniciar el temporizador del hall al llegar al final de los 15 segundos
+    #             self.open_monitor_time = self.current_time
+                
+
+    #     print(f"ANIM_MAP: {self.anim_map}")
+    #     self.write_log()        
     def check_anim(self):
             current_anims = []
             if self.results is not None:
@@ -142,7 +194,7 @@ class MODO_IA:
                         class_name = self.model.names[class_id]
                         if self.anim_utils.check_location(class_name,self.num_camera):
                             current_anims.append(class_name)
-                            current_anims=self.change_dict(current_anims)
+                            # current_anims=self.change_dict(current_anims)
             if not any(self.anim_map.values()):
                 # Si no hay animaciones registradas en ninguna cámara, registrar las actuales en la cámara actual
                 self.anim_map[self.num_camera] = set(current_anims)
@@ -182,17 +234,7 @@ class MODO_IA:
     def stop_detection_thread(self):
         self.stop_detection.set()
         self.detection_thread.join()
-    def step(self, action):
-            if action == 0:
-                self.actions_manager.observe_hallway(look_left=False,look_right=False)
-            elif action == 1:
-                self.actions_manager.observe_monitor(change_camera=True)
-            elif action == 2:
-                self.actions_manager.defense_normal()
-            elif action == 3:
-                self.actions_manager.defense_foxy()
-            else:
-                print("Acción no reconocida")
+
     def reset(self):
         self.turn_to_left = False
         self.turn_to_right = False
@@ -203,23 +245,22 @@ class MODO_IA:
         self.put_mask = False
         self.jumpscare=False
         self.in_office=False
-        self.anim_map = {}
+        self.anim_map = {i: set() for i in range(0, 13)}
         self.num_camera = 9
         self.flashlight=False
         self.music_box = True
-    def change_dict(dict):
-        new_dict =dict.copy()
-        for value in new_dict.values():
-         if value is "toy_freddy": value = 1,
-         if value is "toy_chica":value = 2,
-         if value is "toy_bonnie":value = 3,
-         if value is "withered_bonnie":value = 4,
-         if value is "withered_chica":value = 5,
-         if value is "withered_foxy":value = 6,
-         if value is "withered_freddy":value = 7,
-         if value is "balloon_boy":value = 8,
-         if value is "mangle":value = 9,
-         if value is "puppet":value = 10,
-        return dict
-       
+    # def change_dict(dict):
+    #     new_dict =dict.copy()
+    #     for value in new_dict.values():
+    #      if value == "toy_freddy": value = 1,
+    #      if value == "toy_chica":value = 2,
+    #      if value == "toy_bonnie":value = 3,
+    #      if value == "withered_bonnie":value = 4,
+    #      if value == "withered_chica":value = 5,
+    #      if value == "withered_foxy":value = 6,
+    #      if value == "withered_freddy":value = 7,
+    #      if value == "balloon_boy":value = 8,
+    #      if value == "mangle":value = 9,
+    #      if value == "puppet":value = 10,
+    #     return dict
 

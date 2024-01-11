@@ -13,6 +13,7 @@ class AnimUtils:
          "puppet":[11,0],
         }
     def check_location(self, anim,num_camera):
+        if anim == "endo-02": return False
         if num_camera in self.anim_location[anim]:
             return True
         else: return False
