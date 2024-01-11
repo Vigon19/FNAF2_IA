@@ -47,6 +47,7 @@ class MODO_IA:
         self.show_log_rect=True
         self.actions_manager = ActionsManager(self)
         self.canInteract=True
+        self.results = []
     def write_log(self):
         font_large = pygame.font.Font("five-nights-at-freddys.ttf", 36)
         font_small = pygame.font.Font("five-nights-at-freddys.ttf", 36)
@@ -77,52 +78,70 @@ class MODO_IA:
                 icon_surface = pygame.image.load(icon_path).convert_alpha()
                 self.game_surface.blit(icon_surface, (icon_x, icon_y))
                 icon_x += icon_surface.get_width() + 10
-    def observation(self):  
-        self.current_time = pygame.time.get_ticks()
+    # def observation(self):  
+    #     self.current_time = pygame.time.get_ticks()
     
-        if self.canInteract:
-            with self.lock:
-                if self.current_time - self.open_monitor_time <= 20000:
-                    self.log="CAMBIO AL MONITOR"
-                    # Está en el monitor
-                    self.open_monitor = True
-                    if self.current_time - self.music_box_time >=10000:
-                        self.num_camera=11
-                        self.music_box_time= self.current_time
+    #     if self.canInteract:
+    #         with self.lock:
+    #             if self.current_time - self.open_monitor_time <= 20000:
+    #                 self.log="CAMBIO AL MONITOR"
+    #                 # Está en el monitor
+    #                 self.open_monitor = True
+    #                 if self.current_time - self.music_box_time >=10000:
+    #                     self.num_camera=11
+    #                     self.music_box_time= self.current_time
                         
-                    else:
-                        if self.current_time - self.change_camera_time >= 4500:
-                            # Cambiar de cámara cada 5 segundos en el monitor
-                            self.num_camera = random.randint(1, 12)
+    #                 else:
+    #                     if self.current_time - self.change_camera_time >= 4500:
+    #                         # Cambiar de cámara cada 5 segundos en el monitor
+    #                         self.num_camera = random.randint(1, 12)
                             
-                            self.change_camera_time = self.current_time
+    #                         self.change_camera_time = self.current_time
 
-                else:
-                    self.log="CAMBIO AL HALL PRINCIPAL"
-                    # Está en el hall
-                    self.open_monitor = False
-                    self.num_camera = 0
-                    self.put_mask=True
-                    self.hallway=True
-                    self.put_mask=True
+    #             else:
+    #                 self.log="CAMBIO AL HALL PRINCIPAL"
+    #                 # Está en el hall
+    #                 self.open_monitor = False
+    #                 self.num_camera = 0
+    #                 self.put_mask=True
+    #                 self.hallway=True
+    #                 self.put_mask=True
                     
-                    if self.current_time - self.open_monitor_time >= 35000:
-                        # Reiniciar el temporizador del hall al llegar al final de los 15 segundos
-                        self.put_mask=False
-                        self.open_monitor_time = self.current_time
-                    
+    #                 if self.current_time - self.open_monitor_time >= 35000:
+    #                     # Reiniciar el temporizador del hall al llegar al final de los 15 segundos
+    #                     self.put_mask=False
+    #                     self.open_monitor_time = self.current_time
+    #     self.draw_rects()             
 
        
         self.write_log()
-    def check_anim(self,detect):
+    def draw_rects(self):
+        results =self.results.copy()
+        if results is not None:
+            for r in self.results: 
+             for i in range(len(r.boxes)):
+                    
+                            class_id = int(r.boxes.cls[i].numpy())
+                            confidence = r.boxes.conf[i].numpy()
+                            class_name = self.model.names[class_id]
+                            x_min, y_min, x_max, y_max = map(int, r.boxes.xyxy[i, :4].numpy())
+                            if self.anim_utils.check_location(class_name,self.num_camera):
+                                pygame.draw.rect(self.game_surface, (255, 0, 0), (x_min, y_min, x_max - x_min, y_max - y_min), 5)
+
+                                font = pygame.font.Font("five-nights-at-freddys.ttf", 36)
+                                label_text = font.render(f"{class_name} {confidence:.2f}", True, (255, 255, 255))
+                                self.game_surface.blit(label_text, (x_min, y_max + 5))
+        
+    def check_anim(self):
             current_anims = []
-            for r in detect:
-                for i in range(len(r.boxes)):
-                    class_id = int(r.boxes.cls[i].numpy())
-                    confidence = r.boxes.conf[i].numpy()
-                    class_name = self.model.names[class_id]
-                    if self.anim_utils.check_location(class_name,self.num_camera):
-                        current_anims.append(class_name)
+            if self.results is not None:
+                for r in self.results:
+                    for i in range(len(r.boxes)):
+                        class_id = int(r.boxes.cls[i].numpy())
+                        confidence = r.boxes.conf[i].numpy()
+                        class_name = self.model.names[class_id]
+                        if self.anim_utils.check_location(class_name,self.num_camera):
+                            current_anims.append(class_name)
             if not any(self.anim_map.values()):
                 # Si no hay animaciones registradas en ninguna cámara, registrar las actuales en la cámara actual
                 self.anim_map[self.num_camera] = set(current_anims)
@@ -144,17 +163,17 @@ class MODO_IA:
         with self.lock:
             
             pygame.image.save(self.game_surface, "frame.png")
-            time.sleep(0.5)
-            results = self.model.predict("frame.png", conf=0.65)
-            self.check_anim(results)
+            
+            self.results = self.model.predict("frame.png", conf=0.65)
+            self.check_anim()
         self.show_log_rect = True
         self.flashlight = False
-        time.sleep(1)
+        time.sleep(0.7)
         
     def run_detection(self):
         while not self.stop_detection.is_set():
             self.detection()
-            time.sleep(1)  # Intervalo de detección
+            time.sleep(0.7)  # Intervalo de detección
 
     def start_detection_thread(self):
         self.detection_thread.start()
@@ -173,3 +192,17 @@ class MODO_IA:
                 self.actions_manager.defense_foxy()
             else:
                 print("Acción no reconocida")
+    def reset(self):
+        self.turn_to_left = False
+        self.turn_to_right = False
+        self.hallway = False
+        self.right_vent = False
+        self.left_vent = False
+        self.open_monitor = False
+        self.put_mask = False
+        self.jumpscare=False
+        self.in_office=False
+        self.anim_map = {}
+        self.num_camera = 9
+        self.flashlight=False
+        self.music_box = True

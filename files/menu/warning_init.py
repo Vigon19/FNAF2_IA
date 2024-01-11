@@ -2,6 +2,9 @@ import pygame
 from files.save.save import save, read
 from files.menu.menu import Menu
 from files.modoIA.modoIA import MODO_IA
+from files.modoIA.fnaf2_gym_RL import FNAF2Env
+
+
 class WarningInit:
     def __init__(self, App):
         self._finished = False
@@ -26,6 +29,7 @@ class WarningInit:
                 white_rect.fill((255, 255, 255,200))
                 # App.surface.blit(white_rect, ((424//2), 0))
                 App.ia=MODO_IA(App,white_rect)
+                App.env=FNAF2Env(App)
             elif keys[pygame.K_2]:
                 self.finish(App)
         else:

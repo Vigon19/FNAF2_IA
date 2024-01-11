@@ -1,7 +1,6 @@
 import pygame
 import time
 from pygame.locals import QUIT
-import matplotlib.pyplot as plt
 import files.game.draw as dr
 from files.import_imp import import_images
 from files.animations.animations_init import animations_init
@@ -11,7 +10,9 @@ from files.menu.menu import Menu
 from files.save.save import save, read
 from files.menu.warning_init import WarningInit
 from files.modoIA.modoIA import MODO_IA
+from files.modoIA.fnaf2_gym_RL import FNAF2Env
 from multiprocessing import Process, Queue
+
 class App:
 	def __init__(self, initial_dimentions=(1024, 768), caption="Five Nights at Freddy's - made with pygame"):
 		self.playing = True
@@ -54,7 +55,7 @@ class App:
 		self.menu:Menu = None
 		self.ia:MODO_IA = None
 		self.loaded = True
-		
+		self.ia_env:FNAF2Env=None
 
 	def get_deltatime(self):
 		self.now_time = time.time()

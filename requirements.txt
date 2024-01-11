@@ -4,3 +4,5 @@ Pillow==10.1.0
 pygame==2.5.2
 rsa==4.9
 ultralytics==8.0.221
+wandb==0.16.2
+stable-baselines3==2.2.1

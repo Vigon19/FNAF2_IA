@@ -6,6 +6,8 @@ from files.menu.night_beaten_animation import NightBeatenAnimation
 from files.menu.you_lost_animation import YouLostAnimation
 from files.game.night import NightAIChanger
 from files.game.telephone import Telephone
+from files.modoIA.ia_model import PPOTrainer
+import time
 class Game:
     def __init__(self, App):
         self.gameOver = False
@@ -68,7 +70,9 @@ class Game:
 
         self.game_update(App)
         if App.ia_control is True:
-            App.ia.observation()
+            App.ia.draw_rects()
+            trainer = PPOTrainer(App.env, model_name=f"{int(time.time())}", total_timesteps=10000)
+            trainer.train_model()
             
         if (not App.objects.Animatronics.being_jumpscared and App.menu.nightToPlay != 7) and not self.night_beaten:
             self.telephone.update(App, App.menu.nightToPlay)

@@ -58,7 +58,7 @@ class MaskButton:
                 self.mask_being_pressed = False
 
         else:
-            if App.ia.put_mask:
+            if not App.ia.put_mask:
                 if not self.mask_being_pressed:
                     self.quitting_mask = True
 
