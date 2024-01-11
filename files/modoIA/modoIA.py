@@ -142,6 +142,7 @@ class MODO_IA:
                         class_name = self.model.names[class_id]
                         if self.anim_utils.check_location(class_name,self.num_camera):
                             current_anims.append(class_name)
+                            current_anims=self.change_dict(current_anims)
             if not any(self.anim_map.values()):
                 # Si no hay animaciones registradas en ninguna cámara, registrar las actuales en la cámara actual
                 self.anim_map[self.num_camera] = set(current_anims)
@@ -206,3 +207,19 @@ class MODO_IA:
         self.num_camera = 9
         self.flashlight=False
         self.music_box = True
+    def change_dict(dict):
+        new_dict =dict.copy()
+        for value in new_dict.values():
+         if value is "toy_freddy": value = 1,
+         if value is "toy_chica":value = 2,
+         if value is "toy_bonnie":value = 3,
+         if value is "withered_bonnie":value = 4,
+         if value is "withered_chica":value = 5,
+         if value is "withered_foxy":value = 6,
+         if value is "withered_freddy":value = 7,
+         if value is "balloon_boy":value = 8,
+         if value is "mangle":value = 9,
+         if value is "puppet":value = 10,
+        return dict
+       
+

@@ -6,3 +6,6 @@ rsa==4.9
 ultralytics==8.0.221
 wandb==0.16.2
 stable-baselines3==2.2.1
+gym == 0.26.2
+tensorboard == 2.15.1
+shimmy>=0.2.1

@@ -2,6 +2,7 @@ import gym
 from gym import spaces
 import random
 import pygame
+import numpy as np
 from files.modoIA.ActionsManager import ActionsManager
 
 class FNAF2Env(gym.Env):
@@ -14,10 +15,16 @@ class FNAF2Env(gym.Env):
         self.current_time = pygame.time.get_ticks()
         # Definir el espacio de acciones y observaciones
         self.action_space = spaces.Discrete(7)  # 7 acciones posibles
+        # Obtén la forma de la superficie del juego
+        game_surface_shape = pygame.surfarray.array3d(App.surface).shape
+
+        # Define el espacio de observación
         self.observation_space = spaces.Dict({
-            'num_camera': spaces.Discrete(13),  # Espacio discreto para num_camera (ajusta según tu necesidad)
-            'anim_map': spaces.MultiDiscrete([len(App.ia.anim_map)] * 13)  # Espacio discreto para anim_map
+            'num_camera': spaces.Discrete(13),
+            'anim_map': spaces.MultiDiscrete([len(App.ia.anim_map)] * 13),
+            'game_surface': spaces.Box(low=0, high=255, shape=game_surface_shape, dtype=np.uint8)
         })
+        self.anim_map_size = self.observation_space['num_camera'].n + sum(self.observation_space['anim_map'].nvec)
         # Inicializar variables de estado
         self.mode_ia = ActionsManager(App.ia)
 
@@ -57,10 +64,10 @@ class FNAF2Env(gym.Env):
 
         if action == 1 and len(self.anim_map[0]) == 0:
             self.last_camera_change_time = pygame.time.get_ticks()
-            reward = 1  # Dar una recompensa positiva si se ejecuta la acción 1 y anim_map[0] está vacío
+            reward += 1  # Dar una recompensa positiva si se ejecuta la acción 1 y anim_map[0] está vacío
 
         if action == 0 and len(self.anim_map[0]) > 0:
-            reward = 1  # Dar una recompensa positiva si se ejecuta la acción 2 y anim_map[0] no está vacío
+            reward += 1  # Dar una recompensa positiva si se ejecuta la acción 2 y anim_map[0] no está vacío
 
         # Verificar el tiempo en la cámara
         if action == 1 and pygame.time.get_ticks() - self.last_camera_change_time >= 3000:
@@ -89,8 +96,10 @@ class FNAF2Env(gym.Env):
         print(f"Estado actual: {self.num_camera}")
 
     def _get_observation(self):
+        game_surface_array = pygame.surfarray.array3d(self.app.surface).shape
         # Obtener la observación actual del entorno
         return {
             'num_camera': self.app.ia.num_camera,
-            'anim_map': self.app.ia.anim_map
+            'anim_map': self.app.ia.anim_map,
+            'game_surface':spaces.Box(low=0, high=255, shape=game_surface_array, dtype=np.uint8)
         }

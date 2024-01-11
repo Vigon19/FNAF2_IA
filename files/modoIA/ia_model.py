@@ -1,47 +1,50 @@
-from stable_baselines3 import PPO
-import os
-from files.modoIA.fnaf2_gym_RL import FNAF2Env
-import time
-import wandb
 
+"""Training the agent"""
+import random
+from IPython.display import clear_output
+import numpy as np
+import pygame
+class Trainer:
+    def __init__(self,App):
+        self.env=App.env
+        game_surface_shape = App.env.observation_space['game_surface'].shape
+        self.q_table = np.zeros([self.env.anim_map_size] + list(game_surface_shape) + [self.env.action_space.n])
+        # Hyperparameters
+        self.alpha = 0.1
+        self.gamma = 0.6
+        self.epsilon = 0.1
 
-class PPOTrainer:
-    def __init__(self, env, model_name, total_timesteps=10000, verbose=1):
-        self.env = env
-        self.model_name = model_name
-        self.total_timesteps = total_timesteps
-        self.verbose = verbose
 
     def train_model(self):
-        models_dir = f"models/{self.model_name}/"
-        logdir = f"logs/{self.model_name}/"
+            for i in range(1, 100001):
+                state = self.env.reset()
+                table_size = self.q_table.shape[0]  # Tamaño de la tabla Q
+                hashed_state = hash(tuple(state)) % table_size
+                epochs, penalties, reward, = 0, 0, 0
+                done = False
+                
+                while not done:
+                    if random.uniform(0, 1) < self.epsilon:
+                        action = self.env.action_space.sample() # Explore action space
+                    else:
+                        action = np.argmax(self.q_table[hashed_state]) # Exploit learned values
 
-        conf_dict = {"Model": "v19",
-                     "Machine": "Main",
-                     "policy": "MultiInputPolicy",
-                     "model_save_name": self.model_name}
+                    next_state, reward, done, info = self.env.step(action) 
+                    
+                    old_value = self.q_table[hashed_state, action]
+                    next_max = np.max(self.q_table[hashed_state])
+                    
+                    new_value = (1 - self.alpha) * old_value + self.alpha * (reward + self.gamma * next_max)
+                    self.q_table[hashed_state, action] = new_value
 
-        wandb.init(
-            project=f'FNAF2RL',
-            entity="sentdex",
-            config=conf_dict,
-            sync_tensorboard=True,
-            save_code=True
-        )
+                    if reward == -10:
+                        penalties += 1
 
-        if not os.path.exists(models_dir):
-            os.makedirs(models_dir)
+                    state = next_state
+                    epochs += 1
+                    
+                if i % 100 == 0:
+                    clear_output(wait=True)
+                    print(f"Episode: {i}")
 
-        if not os.path.exists(logdir):
-            os.makedirs(logdir)
-
-        model = PPO('MultiInputPolicy', self.env, verbose=self.verbose, tensorboard_log=logdir)
-
-        iters = 0
-        while True:
-            print("On iteration: ", iters)
-            iters += 1
-            model.learn(total_timesteps=self.total_timesteps, reset_num_timesteps=False, tb_log_name=f"PPO")
-            model.save(f"{models_dir}/{self.total_timesteps * iters}")
-
-
+            print("Training finished.\n")
