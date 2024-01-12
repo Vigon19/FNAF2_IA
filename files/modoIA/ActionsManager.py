@@ -1,5 +1,4 @@
 import random
-import pygame
 class ActionsManager:
     def __init__(self, mode_ia):
         self.mode_ia = mode_ia
@@ -7,9 +6,10 @@ class ActionsManager:
     def observe_office(self):
         print("Observando en la oficina")
         # Lógica específica para observar en el pasillo
+        
         self.mode_ia.put_mask=False
         self.mode_ia.open_monitor=False
-        self.time_in_cameras=pygame.time.get_ticks()
+        self.mode_ia.num_camera=0
         # if look_left:
         #     self.mode_ia.hallway = False
         #     self.mode_ia.left_vent=True
@@ -79,5 +79,6 @@ class ActionsManager:
             else: self.mode_ia.hallway=False
         else:
             self.mode_ia.flashlight=False
-    def change_camera(self):
-        self.mode_ia.num_camera = random.randint(1, 12)
+    def change_camera(self,App):
+
+            self.mode_ia.num_camera = random.randint(1, 12)

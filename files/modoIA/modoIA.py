@@ -37,7 +37,7 @@ class MODO_IA:
         self.label = ""
         self.names = []
         self.anims = []
-        self.lock=Lock()
+        
         self.detection_thread = Thread(target=self.run_detection, daemon=True)
         self.stop_detection = Event()
         self.start_detection_thread()
@@ -80,43 +80,6 @@ class MODO_IA:
                 icon_surface = pygame.image.load(icon_path).convert_alpha()
                 self.game_surface.blit(icon_surface, (icon_x, icon_y))
                 icon_x += icon_surface.get_width() + 10
-    # def observation(self):  
-    #     self.current_time = pygame.time.get_ticks()
-    
-    #     if self.canInteract:
-    #         with self.lock:
-    #             if self.current_time - self.open_monitor_time <= 20000:
-    #                 self.log="CAMBIO AL MONITOR"
-    #                 # Está en el monitor
-    #                 self.open_monitor = True
-    #                 if self.current_time - self.music_box_time >=10000:
-    #                     self.num_camera=11
-    #                     self.music_box_time= self.current_time
-                        
-    #                 else:
-    #                     if self.current_time - self.change_camera_time >= 4500:
-    #                         # Cambiar de cámara cada 5 segundos en el monitor
-    #                         self.num_camera = random.randint(1, 12)
-                            
-    #                         self.change_camera_time = self.current_time
-
-    #             else:
-    #                 self.log="CAMBIO AL HALL PRINCIPAL"
-    #                 # Está en el hall
-    #                 self.open_monitor = False
-    #                 self.num_camera = 0
-    #                 self.put_mask=True
-    #                 self.hallway=True
-    #                 self.put_mask=True
-                    
-    #                 if self.current_time - self.open_monitor_time >= 35000:
-    #                     # Reiniciar el temporizador del hall al llegar al final de los 15 segundos
-    #                     self.put_mask=False
-    #                     self.open_monitor_time = self.current_time
-    #     self.draw_rects()             
-
-       
-        self.write_log()
     def draw_rects(self):
         results =self.results.copy()
         if results is not None:
@@ -133,57 +96,6 @@ class MODO_IA:
                                 font = pygame.font.Font("five-nights-at-freddys.ttf", 36)
                                 label_text = font.render(f"{class_name} {confidence:.2f}", True, (255, 255, 255))
                                 self.game_surface.blit(label_text, (x_min, y_max + 5))
-    # def observation(self):      
-    #     self.current_time = pygame.time.get_ticks()
-    #     if self.current_time - self.open_monitor_time <= 20000:
-    #         self.log="CAMBIO AL MONITOR"
-    #         # Está en el monitor
-    #         self.open_monitor = True
-    #         if self.current_time - self.music_box_time >=10000:
-    #             self.num_camera=11
-    #             self.music_box_time= self.current_time
-    #             self.draw_detection_box()
-    #         else:
-    #             if self.current_time - self.change_camera_time >= 4000:
-    #                 # Cambiar de cámara cada 5 segundos en el monitor
-    #                 self.num_camera = random.randint(1, 12)
-    #                 self.draw_detection_box()
-    #                 self.change_camera_time = self.current_time
-
-    #     else:
-    #         self.log="CAMBIO AL HALL PRINCIPAL"
-    #         # Está en el hall
-    #         self.open_monitor = False
-    #         self.num_camera = 0
-    #         self.draw_detection_box()
-    #         self.hallway=True
-    #         if self.current_time - self.open_monitor_time <= 27000:
-    #             # Girar a la izquierda durante los primeros 5 segundos en el hall
-               
-    #             self.turn_to_left = True
-    #             self.turn_to_right = False
-    #             self.left_vent = True
-    #             self.right_vent = False
-
-    #         elif self.current_time - self.open_monitor_time <= 31000:
-    #             # Girar a la derecha durante los siguientes 5 segundos en el hall
-    #             self.turn_to_left = False
-    #             self.turn_to_right = True
-    #             self.left_vent = False
-    #             self.right_vent = True
-
-    #         elif self.current_time - self.open_monitor_time <= 33000:
-    #             self.turn_to_left = False
-    #             self.turn_to_right = False
-    #             self.left_vent = False
-    #             self.right_vent = False
-    #         elif self.current_time - self.open_monitor_time <= 35000:
-    #             # Reiniciar el temporizador del hall al llegar al final de los 15 segundos
-    #             self.open_monitor_time = self.current_time
-                
-
-    #     print(f"ANIM_MAP: {self.anim_map}")
-    #     self.write_log()        
     def check_anim(self):
             current_anims = []
             if self.results is not None:
@@ -210,31 +122,24 @@ class MODO_IA:
                     else:
                         self.anim_map[self.num_camera].update(current_anims)
     def detection(self):
-        print("DETECCIÓN")
-        self.show_log_rect = False
-        self.flashlight = True
-        with self.lock:
+
+        pygame.image.save(self.game_surface, "frame.png")
             
-            pygame.image.save(self.game_surface, "frame.png")
-            
-            self.results = self.model.predict("frame.png", conf=0.65)
-            self.check_anim()
-        self.show_log_rect = True
-        self.flashlight = False
-        time.sleep(0.7)
+        self.results = self.model.predict("frame.png", conf=0.5)
         
+        self.check_anim()
+        
+  
     def run_detection(self):
         while not self.stop_detection.is_set():
             self.detection()
-            time.sleep(0.7)  # Intervalo de detección
+            time.sleep(0.25)  # Intervalo de detección
 
     def start_detection_thread(self):
         self.detection_thread.start()
-
     def stop_detection_thread(self):
         self.stop_detection.set()
         self.detection_thread.join()
-
     def reset(self):
         self.turn_to_left = False
         self.turn_to_right = False

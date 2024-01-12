@@ -1,8 +1,6 @@
 import gym
 from gym import spaces
-import random
 import pygame
-import numpy as np
 from files.modoIA.ActionsManager import ActionsManager
 
 class FNAF2Env(gym.Env):
@@ -11,8 +9,9 @@ class FNAF2Env(gym.Env):
         self.app = App
         self.anim_map = App.ia.anim_map
         self.num_camera = App.ia.num_camera
-        self.previous_action=-1
+        self.previous_action=1
         self.last_camera_change_time = pygame.time.get_ticks()
+        self.defense_foxy_time=pygame.time.get_ticks()
         self.music_box_time=pygame.time.get_ticks()
         # Definir el espacio de acciones y observaciones
         self.action_space = spaces.Discrete(9)  # 9 acciones posibles
@@ -47,6 +46,7 @@ class FNAF2Env(gym.Env):
             self.action_manager.defense_normal()
         elif action == 3:
             self.action_manager.defense_foxy()
+            self.defense_foxy_time=pygame.time.get_ticks()
         elif action == 4:
             self.action_manager.defensa_balloon_boy()
         elif action == 5:
@@ -56,7 +56,8 @@ class FNAF2Env(gym.Env):
         elif action == 7:
             self.action_manager.turn_off_light()
         elif action == 8:
-            self.action_manager.change_camera()
+            self.action_manager.change_camera(self.app)
+
         # Obtener la observación después de la acción
         observation = self._get_observation()
         
@@ -64,35 +65,46 @@ class FNAF2Env(gym.Env):
         reward = 0  # Inicializa la recompensa en 0
 
         if self.app.ia.game_over or self.app.ia.jumpscare:
-            reward = -1  # Dar una recompensa negativa si el juego ha terminado
+            reward = -5  # Dar una recompensa negativa si el juego ha terminado
 
         if action == 1 and len(self.anim_map[0]) == 0:
             reward += 1 # Dar una recompensa positiva si se ejecuta la acción 1 y anim_map[0] está vacío
         else:
             reward -=1
-        if action == 0 and len(self.anim_map[0]) > 0:
-            reward +=1  # Dar una recompensa positiva si se ejecuta la acción 2 y anim_map[0] no está vacío
-        else:
-            reward -=1
+
+        if (action == 0 or action == 2 or action == 3 or action == 4)and len(self.anim_map[0]) > 0:
+            reward +=1  # Dar una recompensa positiva si se ejecuta la acción 0 y anim_map[0] no está vacío
 
         if self.previous_action == 1 and pygame.time.get_ticks() - self.last_camera_change_time >= 1500:
             if action==8:
-                reward+=5
+                reward+=1
                 self.last_camera_change_time= pygame.time.get_ticks()
+
         if self.previous_action==1:
             if action==1:
                 reward -=1
-        # Determinar si el episodio ha terminado
-        if (action == 2 or action == 3 or action == 4) and len(self.anim_map[0]) == 0: 
+        if (action == 3 or action == 4) and len(self.anim_map[0]) == 0: 
             reward -= 1
-        if (action == 2 or action == 3 or action == 4) and len(self.anim_map[0]) > 0: 
+        if (action == 3 or action == 4) and len(self.anim_map[0]) > 0: 
             reward += 1
             
-        if pygame.time.get_ticks()- self.music_box_time>=3000:
+        if pygame.time.get_ticks()- self.music_box_time>=4000:
             if action == 5:
                 reward +=1
-
-        done = self.app.ia.game_over
+                self.music_box_time=pygame.time.get_ticks()
+        if action == 2 and self.app.ia.in_office:
+            reward +=4
+        else:
+            reward -=4
+        
+        if action == 3 and 'withered_foxy' in self.anim_map[0] and (pygame.time.get_ticks()-self.defense_foxy_time<3000):
+            reward += 2
+        else:
+            reward -=2
+        if pygame.time.get_ticks()-self.defense_foxy_time>=3000:
+            self.defense_foxy_time=pygame.time.get_ticks()
+        
+        done = False
 
         # Información adicional (opcional)
         info = {}
@@ -104,7 +116,6 @@ class FNAF2Env(gym.Env):
         print(f"Estado actual: {self.num_camera}")
 
     def _get_observation(self):
-        game_surface_array = pygame.surfarray.array3d(self.app.surface).shape
         # Obtener la observación actual del entorno
         return {
             'num_camera': self.app.ia.num_camera,

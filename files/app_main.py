@@ -12,7 +12,6 @@ from files.menu.warning_init import WarningInit
 from files.modoIA.modoIA import MODO_IA
 from files.modoIA.fnaf2_gym_RL import FNAF2Env
 from multiprocessing import Process, Queue
-
 class App:
 	def __init__(self, initial_dimentions=(1024, 768), caption="Five Nights at Freddy's - made with pygame"):
 		self.playing = True
@@ -22,7 +21,7 @@ class App:
 		pygame.init() 
 		pygame.mixer.init() 
 		self.dimentions = initial_dimentions
-		self.surface = pygame.display.set_mode( self.dimentions ,vsync=True)
+		self.surface = pygame.display.set_mode( self.dimentions )
 		pygame.display.set_caption(caption) # Win's name
 
 		# Icon
@@ -32,7 +31,6 @@ class App:
 		# Fps configurations
 		self.clock = pygame.time.Clock()
 		self.frames_per_second = 60
-
 		self.warning_init = WarningInit(self)
 		self.introduccion_proyecto = pygame.image.load("sprites/menu/logos/intro_proyecto.png").convert_alpha()
 		self.inital_warning = pygame.image.load("sprites/menu/logos/4.png").convert_alpha()
@@ -73,7 +71,7 @@ class App:
 			# Frames per second
 			self.game_fps = self.clock.tick(self.frames_per_second)
 
-			#pygame.display.set_caption(str(round(self.clock.get_fps(), 2)) ) # Win's name
+			pygame.display.set_caption(str(round(self.clock.get_fps(), 2)) ) # Win's name
 
 			#DeltaTime
 			self.get_deltatime()

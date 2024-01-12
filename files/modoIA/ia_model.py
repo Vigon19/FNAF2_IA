@@ -8,30 +8,34 @@ class Trainer:
     def __init__(self, App):
         self.env = App.env
         self.App = App
-        # game_surface_shape = App.env.observation_space['game_surface'].shape
         self.q_table = np.zeros([self.env.anim_map_size] + [self.env.action_space.n])
         # Hyperparameters
         self.alpha = 0.1
         self.gamma = 0.6
         self.epsilon = 0.1
-        self.action_interval = 1200  # Intervalo de tiempo en milisegundos entre acciones
+        self.action_interval = 2000  # Intervalo de tiempo en milisegundos entre acciones
         self.last_action_time = pygame.time.get_ticks()
 
     def train_model(self):
-        for i in range(1, 100001):
+        for i in range(1, 101):
+            done = False
             state = self.env.reset()
+            self.App.game.updater(self.App)
+            pygame.display.flip()
             table_size = self.q_table.shape[0]  # Tamaño de la tabla Q
             hashed_state = hash(tuple(state)) % table_size
             epochs, penalties, reward, = 0, 0, 0
-            done = False
-
+            print("RESEEEEET")
             while not done:
+                events = pygame.event.get()
+                self.App.game_fps = self.App.clock.tick(self.App.frames_per_second)
+                self.App.get_deltatime()
+                self.App.game_events(events)
                 self.App.game.updater(self.App)
+                self.App.ia.draw_rects()
                 pygame.display.flip()
-
                 current_time = pygame.time.get_ticks()
                 if current_time - self.last_action_time >= self.action_interval:
-                    # Realizar acción solo si ha pasado el intervalo de tiempo especificado
                     if random.uniform(0, 1) < self.epsilon:
                         action = self.env.action_space.sample()  # Explore action space
                     else:
@@ -44,8 +48,12 @@ class Trainer:
 
                     new_value = (1 - self.alpha) * old_value + self.alpha * (reward + self.gamma * next_max)
                     self.q_table[hashed_state, action] = new_value
+                    clock = pygame.time.Clock()
+                    fps = clock.get_fps()
+                    
+                    #print(f"Observación (anim_map): {state['anim_map']}, Recompensa: {reward}, Terminado: {done}")
+                    print(f"Recompensa: {reward}, Terminado: {done}")
 
-                    print(f"Observación (anim_map): {state['anim_map']}, Recompensa: {reward}, Terminado: {done}")
                     if reward == -10:
                         penalties += 1
 

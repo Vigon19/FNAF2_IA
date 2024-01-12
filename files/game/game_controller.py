@@ -6,6 +6,8 @@ from files.menu.night_beaten_animation import NightBeatenAnimation
 from files.menu.you_lost_animation import YouLostAnimation
 from files.game.night import NightAIChanger
 from files.game.telephone import Telephone
+from files.game.game_objects import GameObjects
+from files.animations.animations_init import animations_init
 class Game:
     def __init__(self, App):
         self.gameOver = False
@@ -69,8 +71,7 @@ class Game:
                 self.telephone.update(App, App.menu.nightToPlay)
 
         self.game_update(App)
-        if App.ia_control is True:
-            App.ia.draw_rects()
+
             
             
         if (not App.objects.Animatronics.being_jumpscared and App.menu.nightToPlay != 7) and not self.night_beaten:
@@ -86,7 +87,11 @@ class Game:
             self.beaten_animation.update(App)
 
         if not self.night_beaten and self.sounds_shutted and self.you_lost:
-            self.you_lost_animation.update(App)
+            self.start_game = True
+            self.played_once = True
+            App.animations = animations_init(App)
+            App.objects = GameObjects(App)
+            App.game = Game(App)
 
         if not pygame.mixer.music.get_busy() and not self.night_beaten:
             pygame.mixer.music.load(App.assets.background_music)

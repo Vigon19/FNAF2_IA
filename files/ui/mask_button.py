@@ -53,7 +53,6 @@ class MaskButton:
                     self.mask_being_pressed = True
                     App.animations.mask.desactivate = True
                     App.assets.mask_on_sound.play()
-                    print("PONSERSE LA MASCARA")
             else:
                 self.mask_being_pressed = False
 
@@ -76,7 +75,6 @@ class MaskButton:
                     App.ia.put_mask = False
                     self.quitting_mask = False
                     App.assets.mask_off_sound.play()
-                    print("QUITARSE LA MASCARA")
     def animation_user_control(self, App, canInteract=True):
         if not self.inMask:
             if (self.mask_button.mouse_hovered and canInteract) or self.entering_mask:

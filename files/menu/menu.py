@@ -55,8 +55,8 @@ class Menu:
 
         self.cutscenes_data = [False, False, False, False]
 
-        self.inNight = 3
-        self.nightToPlay = 3
+        self.inNight = 4
+        self.nightToPlay = 4
 
         self.played_once = False
 
