@@ -17,12 +17,14 @@ class BaloonBoy(Animatronic):
                     self.change_location_id(App, 103)
 
             case 103:
+                App.ia.in_office=True
                 if pygame.time.get_ticks() - self.timer > self.vent_time_to_scare and App.objects.open_monitor_button.inCamera and not App.objects.office.animatronic_in_office:
                     self.change_location_id(App, -1, forced=True)
 
                 if App.objects.mask_button.inMask:
                     self.time_with_mask += 1
                 if self.time_with_mask >= self.time_with_mask_goal:
+                    App.ia.in_office=False
                     self.return_to_rest_room(App)
 
             case -1:

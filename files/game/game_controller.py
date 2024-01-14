@@ -92,7 +92,7 @@ class Game:
             App.animations = animations_init(App)
             App.objects = GameObjects(App)
             App.game = Game(App)
-
+            App.ia.game_over=False
         if not pygame.mixer.music.get_busy() and not self.night_beaten:
             pygame.mixer.music.load(App.assets.background_music)
             pygame.mixer.music.play(-1)

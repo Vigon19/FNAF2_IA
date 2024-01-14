@@ -31,11 +31,13 @@ class ToyBonnie(Animatronic):
                     self.change_location_id(App, 102)
 
             case 102:
+                App.ia.in_office=True
                 if (pygame.time.get_ticks() - self.timer > self.vent_time_to_scare and App.objects.open_monitor_button.inCamera):
                     self.change_location_id(App, 104)
                 if App.objects.mask_button.inMask:
                     if (pygame.time.get_ticks() - self.mask_timer > 1500):
                         self.change_location_id(App, 104)
+                        App.ia.in_office=False
                 else:
                     self.mask_timer = pygame.time.get_ticks()
                     

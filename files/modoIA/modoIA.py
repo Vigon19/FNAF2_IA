@@ -1,13 +1,13 @@
 from ultralytics import YOLO
 import pygame
-import random
 from threading import Thread, Timer, Lock,Event
-from files.modoIA.ActionsManager import ActionsManager
 from files.modoIA.anim_utils import AnimUtils
+from files.modoIA.ActionsManager import ActionsManager
 import time
 class MODO_IA:
-    def __init__(self,App,log_rect):
+    def __init__(self,App):
         # Inicialización de variables de estado
+        self.lock=Lock()
 
         #en pasillo
         self.turn_to_left = False
@@ -22,12 +22,13 @@ class MODO_IA:
         self.anim_utils =AnimUtils()
         #Dict de los animatronicos
         self.anim_map = {i: set() for i in range(0, 13)}
-
+        self.action_manager = ActionsManager(self)
         #en el monitor
         self.num_camera = 9
         self.flashlight=True
         self.music_box = True
         self.game_surface=App.surface
+        self.office=App.objects.office
         self.model = YOLO("runs/segment/train4/weights/best.pt")
         self.last_observation_time = pygame.time.get_ticks()
         self.change_camera_time = pygame.time.get_ticks()
@@ -37,52 +38,22 @@ class MODO_IA:
         self.label = ""
         self.names = []
         self.anims = []
-        
+        self.assets=App.assets
+        self.dimentions=App.dimentions
         self.detection_thread = Thread(target=self.run_detection, daemon=True)
         self.stop_detection = Event()
         self.start_detection_thread()
-        self.log_rect=log_rect
+
         self.log=""
         self.game_over=False
         self.show_log_rect=True
-        self.actions_manager = ActionsManager(self)
         self.canInteract=True
         self.results = []
         self.waiting_time=pygame.time.get_ticks()
         self.waiting_time_exceeded=False
-    def write_log(self):
-        font_large = pygame.font.Font("five-nights-at-freddys.ttf", 36)
-        font_small = pygame.font.Font("five-nights-at-freddys.ttf", 36)
-
-        main_text_surface = font_large.render(self.log, True, (0, 0, 0))
-        num_camera_surface = font_small.render(f"{self.num_camera}", True, (0, 0, 0))
-
-        main_text_x = 10
-        main_text_y = (100 - main_text_surface.get_height()) // 2
-
-        self.log_rect.fill((255, 255, 255, 200))
-
-        if self.show_log_rect:
-            self.log_rect.blit(main_text_surface, (main_text_x, main_text_y))
-
-            num_camera_x = 600 - num_camera_surface.get_width() - 60
-            num_camera_y = main_text_y - 20
-
-            self.log_rect.blit(num_camera_surface, (num_camera_x, num_camera_y))
-
-            self.game_surface.blit(self.log_rect, ((224), 0))
-
-            icon_x = 600 - num_camera_surface.get_width() - 10
-            icon_y = num_camera_y + num_camera_surface.get_height() + 10
-
-            for icon_name in self.anim_map[self.num_camera]:
-                icon_path = f"sprites/icons/{icon_name}.png"
-                icon_surface = pygame.image.load(icon_path).convert_alpha()
-                self.game_surface.blit(icon_surface, (icon_x, icon_y))
-                icon_x += icon_surface.get_width() + 10
+    
     def draw_rects(self):
-        results =self.results.copy()
-        if results is not None:
+        if self.results is not None:
             for r in self.results: 
              for i in range(len(r.boxes)):
                     
@@ -122,18 +93,18 @@ class MODO_IA:
                     else:
                         self.anim_map[self.num_camera].update(current_anims)
     def detection(self):
-
-        pygame.image.save(self.game_surface, "frame.png")
+        with self.lock:
+            pygame.image.save(self.game_surface, "frame.png")
+                
+            self.results = self.model.predict("frame.png", conf=0.65)
             
-        self.results = self.model.predict("frame.png", conf=0.5)
-        
-        self.check_anim()
+            self.check_anim()
         
   
     def run_detection(self):
         while not self.stop_detection.is_set():
             self.detection()
-            time.sleep(0.25)  # Intervalo de detección
+            time.sleep(0.05)  # Intervalo de detección
 
     def start_detection_thread(self):
         self.detection_thread.start()
@@ -154,18 +125,9 @@ class MODO_IA:
         self.num_camera = 9
         self.flashlight=False
         self.music_box = True
-    # def change_dict(dict):
-    #     new_dict =dict.copy()
-    #     for value in new_dict.values():
-    #      if value == "toy_freddy": value = 1,
-    #      if value == "toy_chica":value = 2,
-    #      if value == "toy_bonnie":value = 3,
-    #      if value == "withered_bonnie":value = 4,
-    #      if value == "withered_chica":value = 5,
-    #      if value == "withered_foxy":value = 6,
-    #      if value == "withered_freddy":value = 7,
-    #      if value == "balloon_boy":value = 8,
-    #      if value == "mangle":value = 9,
-    #      if value == "puppet":value = 10,
-    #     return dict
-
+        self.game_over=False
+        self.action_manager.reset_action_duration()
+    def center_camera(self):
+        self.office.position[0]=-240
+        #-abs(self.assets.office1.get_width() - self.dimentions.dimentions[0])
+    

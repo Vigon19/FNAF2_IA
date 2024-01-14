@@ -12,16 +12,18 @@ from files.menu.warning_init import WarningInit
 from files.modoIA.modoIA import MODO_IA
 from files.modoIA.fnaf2_gym_RL import FNAF2Env
 from multiprocessing import Process, Queue
+
 class App:
 	def __init__(self, initial_dimentions=(1024, 768), caption="Five Nights at Freddy's - made with pygame"):
 		self.playing = True
 		self.loaded = False
 		self.ia_control=False
+		self.finish_train=False
 		self.screen_queue = Queue()
 		pygame.init() 
 		pygame.mixer.init() 
 		self.dimentions = initial_dimentions
-		self.surface = pygame.display.set_mode( self.dimentions )
+		self.surface = pygame.display.set_mode( self.dimentions ,vsync=True)
 		pygame.display.set_caption(caption) # Win's name
 
 		# Icon
@@ -52,6 +54,7 @@ class App:
 		self.game:Game = None
 		self.menu:Menu = None
 		self.ia:MODO_IA = None
+		
 		self.loaded = True
 		self.ia_env:FNAF2Env=None
 
