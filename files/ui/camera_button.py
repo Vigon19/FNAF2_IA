@@ -28,12 +28,12 @@ class CameraButton:
             App.objects.mask_button.quitting_mask = True
             App.animations.mask.sprite_num = 0
             if App.ia_control is True:
-                App.ia.put_mask=False
+                App.ia.env_var.put_mask=False
 
         if App.animations.monitor.sprite_num == 0 and self.quitting_camera:
             self.quitting_camera = False
             if App.ia_control is True:
-                App.ia.open_monitor=False
+                App.ia.env_var.open_monitor=False
         
 
     def handle_user_control(self, App, canInteract=True):
@@ -48,7 +48,7 @@ class CameraButton:
                     self.camera_being_pressed = False
 
     def handle_ia_control(self, App):
-        if App.ia.open_monitor:
+        if App.ia.env_var.open_monitor:
             # Lógica para abrir el monitor en modo IA
             if not self.inCamera:
                 self.entering_camera = True
@@ -130,12 +130,12 @@ class CameraButton:
                     self.quitting_camera = False
                     App.assets.camera_sound_2.play()
                     if App.ia_control:
-                        App.ia.open_monitor=False
+                        App.ia.env_var.open_monitor=False
 
     def animation_ia_control(self, App, canInteract=True):
         # Monitor animation
         if not self.inCamera and App.ia_control:
-            if (App.ia.open_monitor and canInteract) or self.entering_camera:
+            if (App.ia.env_var.open_monitor and canInteract) or self.entering_camera:
                 if not self.camera_being_pressed:
                     self.entering_camera = True
                     App.animations.monitor.update(App.surface)
@@ -154,7 +154,7 @@ class CameraButton:
                 self.camera_being_pressed = False
 
         else:
-            if App.ia.open_monitor or self.quitting_camera:
+            if App.ia.env_var.open_monitor or self.quitting_camera:
                 if not self.camera_being_pressed:
                     self.quitting_camera = True
 
@@ -175,4 +175,4 @@ class CameraButton:
                     self.quitting_camera = False
                     App.assets.camera_sound_2.play()
                     if App.ia_control:
-                        App.ia.open_monitor=False
+                        App.ia.env_var.open_monitor=False

@@ -33,6 +33,7 @@ class Game:
 
         self.num_of_channels = 32
 
+
     def set_audio(self, App):
         self.sounds_shutted = False
         pygame.mixer.set_num_channels(self.num_of_channels)
@@ -60,7 +61,13 @@ class Game:
         
     def updater(self, App):
         if App.objects.gameTimer.time == 6:
-            self.night_beaten = True
+            # self.night_beaten = True
+            self.start_game = True
+            self.played_once = True
+            App.animations = animations_init(App)
+            App.objects = GameObjects(App)
+            App.game = Game(App)
+            App.ia.env_var.game_over=False
 
         if App.objects.Animatronics.being_jumpscared and not self.sounds_shutted:
             self.stop_sounds()
@@ -69,10 +76,11 @@ class Game:
             self.ai_updater.update(App, App.menu.nightToPlay)
             if App.menu.nightToPlay != 7 and App.objects.Animatronics.being_jumpscared:
                 self.telephone.update(App, App.menu.nightToPlay)
-
+        
         self.game_update(App)
 
-            
+        if App.only_detection:
+            App.ia.draw_ia.draw_rects(App.ia)    
             
         if (not App.objects.Animatronics.being_jumpscared and App.menu.nightToPlay != 7) and not self.night_beaten:
             self.telephone.update(App, App.menu.nightToPlay)
@@ -92,11 +100,11 @@ class Game:
             App.animations = animations_init(App)
             App.objects = GameObjects(App)
             App.game = Game(App)
-            App.ia.game_over=False
+            App.ia.env_var.game_over=False
         if not pygame.mixer.music.get_busy() and not self.night_beaten:
             pygame.mixer.music.load(App.assets.background_music)
             pygame.mixer.music.play(-1)
-
+        
     def game_update(self, App):
      
         if not self.night_beaten and not self.you_lost:
@@ -108,6 +116,7 @@ class Game:
                 # YOU LOST
                 self.you_lost = True
             else:
+                
                 # Background
                 App.objects.camera.timers_update(App)
 
@@ -151,6 +160,7 @@ class Game:
 
                 # Sounds
                 sounds_effects_updater(App)
+ 
         else:
             App.objects.office.update(App, canInteract=False, draw=True, animate=False)
 
@@ -164,6 +174,6 @@ class Game:
             App.objects.mask_button.update(App, canInteract=False)
             App.objects.mask_button.quitting_mask = True
             if App.ia_control:
-                App.ia.open_monitor=False
-                App.ia.put_mask=False
+                App.ia.env_var.open_monitor=False
+                App.ia.env_var.put_mask=False
 

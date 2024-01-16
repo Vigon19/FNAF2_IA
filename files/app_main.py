@@ -8,16 +8,16 @@ from files.game.game_objects import GameObjects
 from files.game.game_controller import Game
 from files.menu.menu import Menu
 from files.save.save import save, read
-from files.menu.warning_init import WarningInit
-from files.modoIA.modoIA import MODO_IA
-from files.modoIA.fnaf2_gym_RL import FNAF2Env
+from files.menu.Options import Options
 from multiprocessing import Process, Queue
+from files.modoIA.modo_ia import ModoIa
 
 class App:
 	def __init__(self, initial_dimentions=(1024, 768), caption="Five Nights at Freddy's - made with pygame"):
 		self.playing = True
 		self.loaded = False
 		self.ia_control=False
+		self.only_detection=False
 		self.finish_train=False
 		self.screen_queue = Queue()
 		pygame.init() 
@@ -33,9 +33,9 @@ class App:
 		# Fps configurations
 		self.clock = pygame.time.Clock()
 		self.frames_per_second = 60
-		self.warning_init = WarningInit(self)
+		self.options = Options()
 		self.introduccion_proyecto = pygame.image.load("sprites/menu/logos/intro_proyecto.png").convert_alpha()
-		self.inital_warning = pygame.image.load("sprites/menu/logos/4.png").convert_alpha()
+		self.options_image = pygame.image.load("sprites/menu/logos/4.png").convert_alpha()
 		self.update(self)
 		
 		self.assets = import_images()
@@ -53,11 +53,8 @@ class App:
 		self.objects:GameObjects = None
 		self.game:Game = None
 		self.menu:Menu = None
-		self.ia:MODO_IA = None
-		
+		self.ia:ModoIa = None	
 		self.loaded = True
-		self.ia_env:FNAF2Env=None
-
 	def get_deltatime(self):
 		self.now_time = time.time()
 		self.deltaTime = self.now_time - self.prev_time
@@ -87,10 +84,10 @@ class App:
 	def game_events(self, events):
 		for event in events:
 			if event.type == QUIT:
-				if self.warning_init.is_finished():
+				if self.options.is_finished():
 					save(self)
 				if self.ia_control is True:
-					self.ia.stop_detection_thread()
+					self.ia.detection.stop_detection_thread()
 				self.playing = False
 				
 	def update(self, events):

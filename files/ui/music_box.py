@@ -42,13 +42,13 @@ class MusicBoxButton:
                     self.timer = pygame.time.get_ticks()
                     self.recharging_time = False
         else:
-            if App.ia.music_box:
+            if App.ia.env_var.music_box:
                 self.button.sprite = App.assets.music_box_button_on
                 self.recharge_time(App)
                 if not pygame.mixer.Channel(3).get_busy() and pygame.time.get_ticks() - self.timer_sound > 450:
                     pygame.mixer.Channel(3).play(App.assets.charge)
                     self.timer_sound = pygame.time.get_ticks()
-            if App.ia.music_box is False:
+            if App.ia.env_var.music_box is False:
                 self.button.sprite = App.assets.music_box_button_off
                 if self.recharging_time:
                     self.timer = pygame.time.get_ticks()

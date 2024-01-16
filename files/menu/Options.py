@@ -1,35 +1,37 @@
 import pygame
 from files.save.save import save, read
 from files.menu.menu import Menu
-from files.modoIA.modoIA import MODO_IA
-from files.modoIA.fnaf2_gym_RL import FNAF2Env
+from files.modoIA.modo_ia import ModoIa
+from files.modoIA.env_RL import envRL
 
 
-class WarningInit:
-    def __init__(self, App):
+class Options:
+    def __init__(self):
         self._finished = False
         self.timer = pygame.time.get_ticks()
         self.alpha = 255
         self.intro_state=-1
         self.introduccion_proyecto = pygame.image.load("sprites/menu/logos/intro_proyecto_2.png").convert_alpha()
     def update(self, App):
-        dims = App.inital_warning.get_rect()
+        dims = App.options_image.get_rect()
         dims_proyecto = App.introduccion_proyecto.get_rect()
-        App.inital_warning.set_alpha(self.alpha)
-        
+        App.options_image.set_alpha(self.alpha)
 
         if App.loaded:
-            App.surface.blit(App.inital_warning, (App.dimentions[0]/2 - dims.w/2, App.dimentions[1]/2 - dims.h/2))
+            App.surface.blit(App.options_image, (App.dimentions[0]/2 - dims.w/2, App.dimentions[1]/2 - dims.h/2))
             keys = pygame.key.get_pressed()
             if keys[pygame.K_1]:
                 
                 App.ia_control=True
-                white_rect = pygame.Surface((600, 100), pygame.SRCALPHA)
-                white_rect.fill((255, 255, 255,200))
-                # App.surface.blit(white_rect, ((424//2), 0))
                 
                 self.finish(App)
             elif keys[pygame.K_2]:
+                
+                App.only_detection=True
+                
+                self.finish(App)
+                
+            elif keys[pygame.K_3]:
                 self.finish(App)
         else:
             App.surface.blit(self.introduccion_proyecto, (App.dimentions[0]/2 - dims_proyecto.w/2, App.dimentions[1]/2 - dims_proyecto.h/2))

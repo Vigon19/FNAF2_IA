@@ -42,7 +42,7 @@ class MaskButton:
         
     def animation_ia_control(self, App, canInteract=True):
         if not self.inMask:
-            if App.ia.put_mask and canInteract:
+            if App.ia.env_var.put_mask and canInteract:
                 self.entering_mask = True
                 App.animations.mask.update(App.surface)
 
@@ -57,7 +57,7 @@ class MaskButton:
                 self.mask_being_pressed = False
 
         else:
-            if not App.ia.put_mask:
+            if not App.ia.env_var.put_mask:
                 if not self.mask_being_pressed:
                     self.quitting_mask = True
 
@@ -72,7 +72,7 @@ class MaskButton:
                 if App.animations.mask.sprite_num == 0:
                     self.inMask = False
                     self.mask_being_pressed = True
-                    App.ia.put_mask = False
+                    App.ia.env_var.put_mask = False
                     self.quitting_mask = False
                     App.assets.mask_off_sound.play()
     def animation_user_control(self, App, canInteract=True):

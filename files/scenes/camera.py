@@ -105,11 +105,11 @@ class Camera:
 
                     self.inCameraRoom = i+1
             else:
-                if App.ia.num_camera is not -1:
-                    if not App.ia.num_camera == self.inCameraRoom:
+                if App.ia.env_var.num_camera is not -1:
+                    if not App.ia.env_var.num_camera == self.inCameraRoom:
                         self.static_animation = True
 
-                    self.inCameraRoom = App.ia.num_camera
+                    self.inCameraRoom = App.ia.env_var.num_camera
             App.surface.blit(App.assets.room_buttons_labels[i], (
                 self.camera_buttons_positions[i][0] + button_dims[0]/2 + 5 , self.camera_buttons_positions[i][1] + button_dims[1]/2 + 7
             ))
@@ -271,7 +271,7 @@ class Camera:
                             surface_id = surface_id_on
                             self.camera_flashlighting = True
             else:
-                if App.ia.flashlight:
+                if App.ia.env_var.flashlight:
                      if surface_id_on:
                             surface_id = surface_id_on
                             self.camera_flashlighting = True
@@ -285,7 +285,7 @@ class Camera:
                 surface_id = surface_id_off
                 self.camera_flashlighting = False
         else:
-            if not ( App.ia.flashlight is False ) and not self.occupied_camera[index]:
+            if not ( App.ia.env_var.flashlight is False ) and not self.occupied_camera[index]:
                 surface_id = surface_id_off
                 self.camera_flashlighting = False
 

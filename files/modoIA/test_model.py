@@ -3,17 +3,20 @@ import numpy as np
 import pygame
 import json
 import hashlib
+from files.modoIA.draw_ia import DrawIa
 from files.modoIA.encoder import SetEncoder
-class TestModel:
+
+class TestModel():
     def __init__(self,App) :
-       
+     self.App=App
      # Cargar el modelo entrenado
      self.modelo_entrenado = joblib.load("modelo_entrenado.joblib")
-     self.app=App
      # Crear una instancia del entorno
-     self.env = App.env  # Asegúrate de tener una instancia de App antes de crear el entorno
-     self.last_action_time = pygame.time.get_ticks()
-     self.action_interval = 2000  # Intervalo de tiempo en milisegundos entre acciones
+     self.env=App.ia.env
+     
+     self.white_rect = pygame.Surface((self.app.surface.get_width(), 80), pygame.SRCALPHA)
+     self.white_rect.fill((255, 255, 255,200))
+     self.draw_ia = DrawIa(App.surface)
     def run_model(self):
         # Iniciar el bucle principal para usar el modelo
         for _ in range(10):  # Cambia 10 por el número de pasos que deseas ejecutar
@@ -36,7 +39,8 @@ class TestModel:
                 self.app.get_deltatime()
                 self.app.game_events(events)
                 self.app.game.updater(self.app)
-                self.app.ia.draw_rects()
+                self.draw_ia.draw_rects()
+                self.draw_ia.write_log(self.white_rect)
                 pygame.display.flip()
                 current_time = pygame.time.get_ticks()
                 if current_time - self.last_action_time >= self.action_interval:

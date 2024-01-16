@@ -30,7 +30,7 @@ class Office:
             #App.objects.open_monitor_button.inCamera = False
             App.objects.open_monitor_button.quitting_camera = True
             if App.ia_control:
-                App.ia.open_monitor=False
+                App.ia.env_var.open_monitor=False
                
                 
         if canInteract or self.animatronic_in_office:
@@ -124,12 +124,12 @@ class Office:
                 if self.position[0] < -abs(App.assets.office1.get_width() - App.dimentions[0]) :
                     self.position[0] = -abs(App.assets.office1.get_width() - App.dimentions[0])
         else:
-            if App.ia.turn_to_left and self.position[0] < 0:
+            if App.ia.env_var.turn_to_left and self.position[0] < 0:
                         self.position[0] += self.move_speed
                         if self.position[0] > 0:
                             self.position[0] = 0
 
-            if App.ia.turn_to_right and self.position[0] > -abs(App.assets.office1.get_width() - App.dimentions[0]):
+            if App.ia.env_var.turn_to_right and self.position[0] > -abs(App.assets.office1.get_width() - App.dimentions[0]):
                         self.position[0] -= self.move_speed
                         if self.position[0] < -abs(App.assets.office1.get_width() - App.dimentions[0]):
                             self.position[0] = -abs(App.assets.office1.get_width() - App.dimentions[0])            
@@ -166,10 +166,9 @@ class Office:
                 self.hallway_on = False
 
         else:
-            if App.ia.hallway:
+            if App.ia.env_var.hallway:
                     if not (cannot_interact or App.objects.battery.charge == 0  or baloon_boy.locationId == -1):
                         self.hallway_on = True
-                        # App.ia.hallway=False
                     else:
                         # Make an error sound
                         self.hallway_on = False
@@ -178,7 +177,7 @@ class Office:
 
             else:
                         self.attempting_hallway_interact = False
-                        self.hallway_on = False
+                        self.hallway_on = True
 
         self.attempting_hallway_interact = True
 
@@ -213,7 +212,7 @@ class Office:
                 self.right_vent_on = False
                 self.attempting_right_vent_interact = False
         else:
-            if App.ia.right_vent:
+            if App.ia.env_var.right_vent:
                 if self.position[0]< -300:
                     if not (self.occupied_office[1] or App.objects.battery.charge == 0  or baloon_boy.locationId == -1):
                             self.office_sprite = App.assets.right_vent_offices[self.get_flashed_right_vent(App)]
@@ -224,7 +223,7 @@ class Office:
                         if not self.attempting_right_vent_interact:
                             App.assets.error_sound.play()
                     self.attempting_right_vent_interact = True
-            if self.position[0]> -300 or  App.ia.right_vent is False:
+            if self.position[0]> -300 or  App.ia.env_var.right_vent is False:
                 self.right_vent_on = False
                 self.attempting_right_vent_interact = False   
         if not self.right_vent_on and not self.left_vent_on and not self.hallway_on:
@@ -260,7 +259,7 @@ class Office:
                 self.left_vent_on = False
                 self.attempting_left_vent_interact = False
         else:
-            if App.ia.left_vent:
+            if App.ia.env_var.left_vent:
                 if self.position[0]> -200:
                      if not (self.occupied_office[2] or App.objects.battery.charge == 0  or baloon_boy.locationId == -1):
                         self.office_sprite = App.assets.left_vent_offices[self.get_flashed_left_vent(App)]
@@ -272,7 +271,7 @@ class Office:
                             App.assets.error_sound.play()
                         
                      self.attempting_left_vent_interact = True
-                if self.position[0]< -200 or  App.ia.left_vent is False:
+                if self.position[0]< -200 or  App.ia.env_var.left_vent is False:
                     self.left_vent_on = False
                     self.attempting_left_vent_interact = False
         if not self.left_vent_on and not self.hallway_on and not self.right_vent_on:

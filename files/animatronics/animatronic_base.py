@@ -54,16 +54,15 @@ class Animatronic(ABC):
                 self.jumpscare_animation.update(App.surface)
                 App.objects.open_monitor_button.quitting_camera = True
                 App.objects.mask_button.quitting_mask = True
-                print("JUMPSCARE")
                 if App.ia_control:
-                    App.ia.open_monitor=False
-                    App.ia.put_mask=False
-                    App.ia.jumpscare=True
-                    App.ia.canInteract=False
+                    App.ia.env_var.open_monitor=False
+                    App.ia.env_var.put_mask=False
+                    App.ia.env_var.jumpscare=True
+                    App.ia.env_var.canInteract=False
                 if self.jumpscare_animation.sprite_num == len(self.jumpscare_animation.sprites) - 1:
                     self._gameOver = True
                     if App.ia_control is True:
-                        App.ia.game_over=True
+                        App.ia.env_var.game_over=True
 
     def update_movement_time(self):
         self.movement_time = self._base_movement_time

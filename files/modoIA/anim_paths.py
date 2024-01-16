@@ -1,4 +1,4 @@
-class AnimUtils:
+class AnimPaths:
     def __init__(self):
         self.anim_location={
          "toy_freddy":[9,10,0],
@@ -13,7 +13,7 @@ class AnimUtils:
          "puppet":[11,0],
         }
     def check_location(self, anim,num_camera):
-        if anim == "endo-02": return False
+        if anim == "endo-02" or anim == "shadow_freddy"  or anim == "golden_freddy": return False
         if num_camera in self.anim_location[anim]:
             return True
         else: return False
