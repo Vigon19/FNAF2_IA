@@ -74,7 +74,7 @@ class envRL(gym.Env):
                     #SI ES FOXY SE DEFIENDE CON ACCION 'DEFENSE_FOXY'
                     if 'withered_foxy' in self.env_var.anim_dict[0] and len(self.env_var.anim_dict[0])== 1 and len(self.env_var.anim_dict[5])==0 and len(self.env_var.anim_dict[5])==0:
                         print("---------------------FOXY----------------")
-                        if self.action_manager.time_action_foxy<4500 or (self.action_manager.time_action_foxy== 0 and self.action_manager.get_action_duration('defense_foxy')<6000):
+                        if self.action_manager.time_action_foxy<4500 or (self.action_manager.time_action_foxy== 0 and self.action_manager.get_action_duration('defense_foxy')<4500):
                             if action == 2:
                                 print("---------------------DEFENSA FOXY (+6)----------------")
                                 reward += 6
@@ -93,7 +93,7 @@ class envRL(gym.Env):
         #OBSERVACIÓN
         else:
             #NO DEFENDER PUPPET
-            if pygame.time.get_ticks()- self.no_defense_puppet<=5000:       
+            if pygame.time.get_ticks()- self.no_defense_puppet<=10000:       
                     print("-------------------PUPPET CON TIEMPO----------------------")
                     self.puppet_sin_tiempo=False
                     #MIRANDO CAMARAS
@@ -143,17 +143,17 @@ class envRL(gym.Env):
                                 print("--------------SEGUIR EN OFICINA (+2)")
                                 reward+=3
                             #CAMBIO
-                            else:
+                            elif action not in [4,5]:
                                 print("----------------CAMBIAR DE OFICINA (-5)----------------")
-                                reward-=3
-                    else:
+                                reward-=5
+                    elif self.previous_action not in [0,4,5]:
                          ("-------------------DEFENDIENDO CUANDO NO HACE FALTA-----------------------")
-                         reward -=5
+                         reward -=10
             #DEFENDER PUPPET                
             else:
                     self.puppet_sin_tiempo=True
                     print("---------------PUPPET SIN TIEMPO----------------")
-                    if self.action_manager.time_action_puppet<5000 or (self.action_manager.time_action_puppet== 0 and self.action_manager.get_action_duration('defensa_puppet')<5000):
+                    if self.action_manager.time_action_puppet<3000 or (self.action_manager.time_action_puppet== 0 and self.action_manager.get_action_duration('defensa_puppet')<3000):
                             if action == 3:
                                     print("---------------SALVAR PUPPET (+3)----------------")
                                     reward+=3
@@ -186,7 +186,7 @@ class envRL(gym.Env):
 
         duration_defense = self.action_manager.time_defense
         if duration_defense is not None:
-             if duration_defense > 8000 or (duration_defense== 0 and self.action_manager.get_action_duration('defense_normal')>=8000):
+             if duration_defense > 7000 or (duration_defense== 0 and self.action_manager.get_action_duration('defense_normal')>=7000):
                         print("----------AMENAZADA SUPERADA -----------")
                         self.env_var.anim_dict[0].clear()
                         self.env_var.anim_dict[5].clear()
@@ -222,8 +222,8 @@ class envRL(gym.Env):
             'put_mask': int(self.env_var.put_mask),
             'jumpscare': int(self.env_var.jumpscare),
             'flashlight': int(self.env_var.flashlight),
-            'puppet_sin_tiempo':int(pygame.time.get_ticks()- self.no_defense_puppet<=5000),
-            'foxy_tiempo': int(self.action_manager.time_action_foxy < 8000),
-            'denfensa_tiempo': int(self.action_manager.time_defense < 8000),
+            'puppet_sin_tiempo':int(pygame.time.get_ticks()- self.no_defense_puppet<=10000),
+            'foxy_tiempo': int(self.action_manager.time_action_foxy < 4500),
+            'denfensa_tiempo': int(self.action_manager.time_defense < 7000),
 
         }

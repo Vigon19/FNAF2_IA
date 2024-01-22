@@ -25,7 +25,7 @@ class EnvironmentVariables:
         #en el monitor
         self.num_camera = 9
         self.flashlight=False
-        self.music_box = True
+        self.music_box = False
 
         #Dict de los animatronicos
         self.anim_dict = {i: set() for i in range(0, 13)}

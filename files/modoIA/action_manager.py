@@ -38,6 +38,7 @@ class ActionsManager:
         self.start_action_timer('observe_office')
         self.pause_timers('observe_office')
         # Lógica específica para observar en el pasillo
+        self.env_action.music_box = False
         self.env_action.put_mask = False
         self.env_action.open_monitor = False
         self.env_action.num_camera = 0
@@ -51,6 +52,7 @@ class ActionsManager:
         self.start_action_timer('observe_office')
         self.pause_timers('observe_office')
         # Lógica específica para observar en el pasillo
+        self.env_action.music_box = False
         self.env_action.put_mask = False
         self.env_action.open_monitor = False
         self.env_action.num_camera = 0
@@ -63,12 +65,14 @@ class ActionsManager:
 
         self.start_action_timer("defense_normal")
         self.pause_timers('defense_normal')
+        self.turn_off_light()
         self.env_action.log=f"DEFENSA NORMAL: {self.env_action.anim_dict[0]}"
         # Lógica específica para la defensa normal
+        self.env_action.music_box = False
         self.env_action.num_camera = 0
         self.env_action.open_monitor = False
         self.env_action.put_mask = True
-        self.turn_off_light()
+        
     def defense_foxy(self):
      with self.lock:
 
@@ -76,6 +80,7 @@ class ActionsManager:
         self.pause_timers('defense_foxy')
         self.env_action.log="DEFENSA DE FOXY"
         # Lógica específica para la defensa conra Foxy
+        self.env_action.music_box = False
         self.env_action.num_camera = 0
         self.env_action.center_camera()
         self.env_action.turn_to_left = False
@@ -104,7 +109,7 @@ class ActionsManager:
         self.pause_timers('observe_monitor')
         if(self.env_action.action_timers['observe_office'] is not None):
             self.env_action.action_timers['observe_office'] = None
-       
+        self.env_action.music_box = False
         self.env_action.put_mask = False
         self.env_action.open_monitor = True
         probabilidad = random.randint(1, 100)
@@ -117,7 +122,7 @@ class ActionsManager:
         self.turn_on_light()
 
     def turn_on_light(self):
-        
+            
             self.env_action.flashlight = True
             self.env_action.left_vent = True
             self.env_action.right_vent = True

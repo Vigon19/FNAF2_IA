@@ -38,7 +38,7 @@ class ModoIa:
         self.last_action_time = pygame.time.get_ticks()
     def train_model(self,App):
         
-        for i in range(1, 51):
+        for i in range(1, 31):
             done = False
             state = self.env.reset()
             
@@ -49,6 +49,7 @@ class ModoIa:
             App.game.updater(App)
             self.draw_ia.write_log(self.white_rect,App.ia.env_var.log)
             self.draw_ia.draw_rects(self)
+            pygame.display.set_caption(f"EPISODIO NÚMERO {i}" ) # Win's name
             pygame.display.flip() #ACTUALIZAR FRAME
             table_size = self.q_table.shape[0]  # Tamaño de la tabla Q
 
@@ -69,13 +70,8 @@ class ModoIa:
                 while not done:
                     #VARIABLE DEL JUEGO NECESARIAS
                     events = pygame.event.get()
-                    App.game_fps = App.clock.tick(App.frames_per_second)
-                    App.get_deltatime()       
-                    App.game_events(events)
-                    App.game.updater(App)
                     if App.finish_train: break
-                    self.draw_ia.write_log(self.white_rect,App.ia.env_var.log)
-                    self.draw_ia.draw_rects(self)
+                   
                     
                     current_time = pygame.time.get_ticks()
                     if current_time - self.last_action_time >= self.action_interval:
@@ -115,7 +111,12 @@ class ModoIa:
                         hashed_state = int(hashlib.sha256(state_str.encode()).hexdigest(), 16) % table_size
                         # Actualizar el tiempo de la última acción
                         self.last_action_time = current_time
-
+                    App.game_fps = App.clock.tick(App.frames_per_second)
+                    App.get_deltatime()       
+                    App.game_events(events)
+                    App.game.updater(App)
+                    self.draw_ia.write_log(self.white_rect,App.ia.env_var.log)
+                    self.draw_ia.draw_rects(self)
                     #ACTUALIZAR EL FRAME
                     pygame.display.flip()
                     
