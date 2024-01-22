@@ -9,11 +9,10 @@ class AnimPaths:
          "withered_foxy":[8,0],
          "withered_freddy":[8,7,3,0],
          "balloon_boy":[10,5,0],
-         "mangle":[12,11,6,0],
+         "mangle":[12,11,10,7,6,1,2,0],
          "puppet":[11,0],
         }
     def check_location(self, anim,num_camera):
-        if anim == "endo-02" or anim == "shadow_freddy"  or anim == "golden_freddy": return False
         if num_camera in self.anim_location[anim]:
             return True
         else: return False

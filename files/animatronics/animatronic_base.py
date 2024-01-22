@@ -57,7 +57,6 @@ class Animatronic(ABC):
                 if App.ia_control:
                     App.ia.env_var.open_monitor=False
                     App.ia.env_var.put_mask=False
-                    App.ia.env_var.jumpscare=True
                     App.ia.env_var.canInteract=False
                 if self.jumpscare_animation.sprite_num == len(self.jumpscare_animation.sprites) - 1:
                     self._gameOver = True

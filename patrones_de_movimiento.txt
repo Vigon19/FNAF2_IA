@@ -8,7 +8,7 @@ Toy Chica: Show Stage>Main Hall>Party Room 4>Party Room 1>Left Air Vent (9>7>4>1
 Toy Freddy: Show Stage>Game Area> Office (9>10>0)
     Se puede usar la mascara al bajar la camara para evitar que te ataque
 
-Mangle: Kid's Cove>Prize Corner>Right Air Vent (12>11>6>0)
+Mangle: Kid's Cove>Prize Corner>Right Air Vent (12>11>7>6>0)
     Si se escucha y no se esta viendo poner la mascara inmediatamente
 
 Withered Chica: Parts & Service>Party Room 4>Party Room 2>Right Air Vent (8>4>2>6>0)

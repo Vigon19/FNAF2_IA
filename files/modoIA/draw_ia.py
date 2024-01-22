@@ -21,11 +21,8 @@ class DrawIa():
 
                     # Obtener las coordenadas ajustadas a las dimensiones actuales
                     x_min, y_min, x_max, y_max = map(int, r.boxes.xyxy[i, :4].numpy())
+                    pygame.draw.rect(self.game_surface, (255, 0, 0), (x_min, y_min, x_max - x_min, y_max - y_min), 5)
 
-
-                    if  ia.anim_path.check_location(class_name, ia.env_var.num_camera):
-                        pygame.draw.rect(self.game_surface, (255, 0, 0), (x_min, y_min, x_max - x_min, y_max - y_min), 5)
-
-                        font = pygame.font.Font("five-nights-at-freddys.ttf", 36)
-                        label_text = font.render(f"{class_name} {confidence:.2f}", True, (255, 255, 255))
-                        self.game_surface.blit(label_text, (x_min, y_max + 5))
+                    font = pygame.font.Font("five-nights-at-freddys.ttf", 36)
+                    label_text = font.render(f"{class_name} {confidence:.2f}", True, (255, 255, 255))
+                    self.game_surface.blit(label_text, (x_min, y_max + 5))

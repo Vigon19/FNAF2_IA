@@ -3,16 +3,9 @@ import pygame
 
 class ActionsManager:
     def __init__(self, env_action,Lock):
-
             self.env_action = env_action
-            self.env_action.action_timers = {"observe_office": None, "observe_monitor": None, "defense_normal": None, "defense_foxy": None,
-                                "defensa_balloon_boy": None, "defensa_puppet": None
-                                }
-            self.env_action.time_action_foxy=0
-            self.env_action.time_action_puppet=0
-            self.env_action.time_defense=0
             self.lock=Lock
-    
+
     def get_action_duration(self, action_name):
         if self.env_action.action_timers[action_name] is not None:
             return pygame.time.get_ticks() - self.env_action.action_timers[action_name]
@@ -70,7 +63,7 @@ class ActionsManager:
 
         self.start_action_timer("defense_normal")
         self.pause_timers('defense_normal')
-        self.env_action.log=f"DEFENSA NORMAL: {self.env_action.anim_map[0]}"
+        self.env_action.log=f"DEFENSA NORMAL: {self.env_action.anim_dict[0]}"
         # Lógica específica para la defensa normal
         self.env_action.num_camera = 0
         self.env_action.open_monitor = False
@@ -93,7 +86,7 @@ class ActionsManager:
       
 
 
-    def defensa_puppet(self):
+    def defense_puppet(self):
      with self.lock:
 
         self.start_action_timer("defensa_puppet")
@@ -103,24 +96,26 @@ class ActionsManager:
         self.env_action.put_mask = False
         self.env_action.open_monitor = True
         self.env_action.num_camera = 11
+
     def change_camera(self):
      with self.lock:
-
+        self.env_action.log="CAMBIAR CAMARA"
         self.start_action_timer("observe_monitor")
         self.pause_timers('observe_monitor')
         if(self.env_action.action_timers['observe_office'] is not None):
             self.env_action.action_timers['observe_office'] = None
-        self.env_action.log="CAMBIAR CAMARA"
+       
         self.env_action.put_mask = False
         self.env_action.open_monitor = True
         probabilidad = random.randint(1, 100)
 
-        # Asignar la cámara en base a la probabilidad
+        # Dar más prioridad a las cámaras 5 y 6 (cámaras de ventilación)
         if probabilidad <= 30:
-            self.env_action.num_camera = random.choice([5, 6])  # Elegir entre 5 y 6
+            self.env_action.num_camera = random.choice([5, 6]) 
         else:
             self.env_action.num_camera = random.randint(1, 12)
         self.turn_on_light()
+
     def turn_on_light(self):
         
             self.env_action.flashlight = True

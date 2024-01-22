@@ -88,7 +88,9 @@ class App:
 					save(self)
 				if self.ia_control is True:
 					self.ia.detection.stop_detection_thread()
+
 				self.playing = False
+				self.finish_train=True
 				
 	def update(self, events):
 		self.surface.fill((0,0,0))

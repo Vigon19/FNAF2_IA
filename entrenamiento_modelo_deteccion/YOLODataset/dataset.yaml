@@ -1,0 +1,4 @@
+train: /content/drive/MyDrive/YOLODataset/train
+val: /content/drive/MyDrive/YOLODataset/val
+nc: 10
+names: ["withered_freddy", "withered_foxy", "withered_bonnie", "puppet", "withered_chica", "toy_bonnie", "balloon_boy", "mangle", "toy_freddy", "toy_chica"]
