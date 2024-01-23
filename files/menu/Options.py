@@ -7,17 +7,19 @@ from files.modoIA.env_RL import envRL
 
 class Options:
     def __init__(self):
-        self._finished = False
+        self.finish_options = False
         self.timer = pygame.time.get_ticks()
         self.alpha = 255
         self.intro_state=-1
         self.introduccion_proyecto = pygame.image.load("sprites/menu/logos/intro_proyecto_2.png").convert_alpha()
     def update(self, App):
+        print("-----AQUI----")
         dims = App.options_image.get_rect()
         dims_proyecto = App.introduccion_proyecto.get_rect()
         App.options_image.set_alpha(self.alpha)
 
         if App.loaded:
+            print("-----App.loaded----")
             App.surface.blit(App.options_image, (App.dimentions[0]/2 - dims.w/2, App.dimentions[1]/2 - dims.h/2))
             keys = pygame.key.get_pressed()
             if keys[pygame.K_1]:
@@ -35,11 +37,11 @@ class Options:
                 self.finish(App)
         else:
             App.surface.blit(self.introduccion_proyecto, (App.dimentions[0]/2 - dims_proyecto.w/2, App.dimentions[1]/2 - dims_proyecto.h/2))
-    def is_finished(self): return self._finished
-
+    def is_finished(self): return self.finish_options
+    def set_finish(self,bool): self.finish_options = bool
     def finish(self, App):
         """ Change to menu and load everything from the save file """
-        if not self._finished:
+        if not self.finish_options:
             data = read(App)
 
             App.menu = Menu(App)
@@ -50,5 +52,5 @@ class Options:
                 App.menu.custom_night_menu.completed_nights = data["Custom"]
                 App.menu.cutscenes_data = data["Cutscenes"]
                 App.menu.start_state=5
-            self._finished = True
+            self.finish_options = True
             

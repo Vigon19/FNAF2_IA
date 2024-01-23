@@ -104,17 +104,7 @@ class NightBeatenAnimation:
                 index += 1
 
     def end_reset_variables(self, App, toMenu=False):
-        if toMenu:
-            App.menu.init_menu_and_save_vars(App)
-        else:
-            App.menu.start_state = 2
-
-        App.menu.start_game = False
-        App.menu.timer = pygame.time.get_ticks()
-        App.menu.objects_alpha = 255
-        if App.menu.nightToPlay <= 5:
-            App.menu.nightToPlay += 1
-            App.menu.inNight += 1
+        App.options.set_finish(False)
 
     def change_numbers(self, App):
         if self.reversed:

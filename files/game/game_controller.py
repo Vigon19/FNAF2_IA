@@ -60,14 +60,16 @@ class Game:
 
         
     def updater(self, App):
-        if App.objects.gameTimer.time == 6:
-            # self.night_beaten = True
+        if App.objects.gameTimer.time == 6 and App.training:
+            
             self.start_game = True
             self.played_once = True
             App.animations = animations_init(App)
             App.objects = GameObjects(App)
             App.game = Game(App)
-            App.ia.env_var.game_over=False
+        elif App.objects.gameTimer.time==6:
+            self.night_beaten = True
+            
 
         if App.objects.Animatronics.being_jumpscared and not self.sounds_shutted:
             self.stop_sounds()

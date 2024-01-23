@@ -17,6 +17,7 @@ class App:
 		self.playing = True
 		self.loaded = False
 		self.ia_control=False
+		self.training=False
 		self.only_detection=False
 		self.finish_train=False
 		self.screen_queue = Queue()

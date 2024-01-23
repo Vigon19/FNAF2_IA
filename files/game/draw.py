@@ -1,9 +1,8 @@
 
-import files.utils as f
-from files.modoIA.modo_ia import ModoIa
 
 def Draw(App):
 	if not App.options.is_finished():
+		print("-----DRAW OPTIONS----")
 		App.options.update(App)
 	else:
 		if not App.menu.start_game:

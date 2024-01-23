@@ -31,14 +31,14 @@ class ModoIa:
         self.alpha = 0.1
         self.gamma = 0.6
         self.epsilon = 0.1
-        self.action_interval = 800  # Intervalo de tiempo en milisegundos entre acciones
+        self.action_interval = 900  # Intervalo de tiempo en milisegundos entre acciones
         self.white_rect = pygame.Surface((App.surface.get_width(), 80), pygame.SRCALPHA)
         self.white_rect.fill((255, 255, 255,200))
         
         self.last_action_time = pygame.time.get_ticks()
     def train_model(self,App):
-        
-        for i in range(1, 51):
+        App.training=True
+        for i in range(1, 61):
             done = False
             state = self.env.reset()
             
@@ -49,7 +49,7 @@ class ModoIa:
             App.game.updater(App)
             self.draw_ia.write_log(self.white_rect,App.ia.env_var.log)
             self.draw_ia.draw_rects(self)
-            pygame.display.set_caption(f"EPISODIO NÚMERO {i}" ) # Win's name
+            pygame.display.set_caption(f"EPISODIO NÚMERO {i}" )
             pygame.display.flip() #ACTUALIZAR FRAME
             table_size = self.q_table.shape[0]  # Tamaño de la tabla Q
 
@@ -71,7 +71,12 @@ class ModoIa:
                     #VARIABLE DEL JUEGO NECESARIAS
                     events = pygame.event.get()
                     if App.finish_train: break
-                   
+                    App.game_fps = App.clock.tick(App.frames_per_second)
+                    App.get_deltatime()       
+                    App.game_events(events)
+                    App.game.updater(App)
+                    self.draw_ia.write_log(self.white_rect,App.ia.env_var.log)
+                    self.draw_ia.draw_rects(self)
                     
                     current_time = pygame.time.get_ticks()
                     if current_time - self.last_action_time >= self.action_interval:
@@ -107,38 +112,33 @@ class ModoIa:
                         state = next_state
                         epochs += 1
                         
-                        # Hash the JSON string
+                       
                         hashed_state = int(hashlib.sha256(state_str.encode()).hexdigest(), 16) % table_size
-                        # Actualizar el tiempo de la última acción
+                        
                         self.last_action_time = current_time
-                    App.game_fps = App.clock.tick(App.frames_per_second)
-                    App.get_deltatime()       
-                    App.game_events(events)
-                    App.game.updater(App)
-                    self.draw_ia.write_log(self.white_rect,App.ia.env_var.log)
-                    self.draw_ia.draw_rects(self)
+                    if App.objects.gameTimer.time == 6:
+                        App.ia.env_var.game_over=False
                     #ACTUALIZAR EL FRAME
                     pygame.display.flip()
                     
             finally:
-                    # Cerrar el archivo CSV al finalizar, incluso si ocurre una excepción
+                    
                     csv_file.close()
+        App.training=False
         print("Training finished.\n")
         model_filename = "modelo_entrenado.joblib"
         joblib.dump(self.q_table, model_filename)
         print(f"Modelo entrenado guardado en {model_filename}")
+        
     def run_model(self,App):
-        # Iniciar el bucle principal para usar el modelo
-        for _ in range(10):  # Cambia 10 por el número de pasos que deseas ejecutar
+        for i in range(5): 
             state = self.env.reset()
             App.game.updater(App)
             pygame.display.flip()
             size= np.zeros([self.env.observation_size] + [self.env.action_space.n]).shape[0] 
-            # Convert the state dictionary to a JSON string
             state_str = json.dumps(state, sort_keys=True, cls=SetEncoder)
-            # Hash the JSON string
             hashed_state = int(hashlib.sha256(state_str.encode()).hexdigest(), 16) % size
-            
+            pygame.display.set_caption(f"INTENTO NÚMERO {i}" )
             
             done = False
 
@@ -149,7 +149,7 @@ class ModoIa:
                 App.get_deltatime()
                 App.game_events(events)
                 App.game.updater(App)
-                if App.finish_train: break
+                if App.finish_train or App.objects.gameTimer.time == 6: break
                 self.draw_ia.draw_rects(self)
                 self.draw_ia.write_log(self.white_rect,App.ia.env_var.log)
                 pygame.display.flip()
@@ -166,4 +166,5 @@ class ModoIa:
                     # Realizar cualquier otra cosa que necesites con la salida del modelo
                     print(f"Acción: {action}, Recompensa: {reward}, Terminado: {done}")
                     self.last_action_time = current_time
-            if App.finish_train: break
+          
+            if App.finish_train or App.objects.gameTimer.time == 6: break

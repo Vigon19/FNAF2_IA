@@ -17,7 +17,6 @@ class envRL(gym.Env):
 
         # Define el espacio de observación
         self.observation_space = spaces.Dict({
-            'anim_dict': spaces.MultiDiscrete([len(env_var.anim_dict)] * 3),
             'last_action': spaces.Discrete(self.action_space.n),
             'open_monitor': spaces.Discrete(2),  
             'num_camera': spaces.Discrete(13),   
@@ -30,9 +29,10 @@ class envRL(gym.Env):
             'music_box': spaces.Discrete(2),
             'puppet_sin_tiempo': spaces.Discrete(2),
             'en_peligro': spaces.Discrete(2),
+            'foxy_en_pasillo': spaces.Discrete(2),
            
         })
-        self.observation_size = (sum(self.observation_space['anim_dict'].nvec) + 39)
+        self.observation_size = 41
 
     def reset(self):
         # Reiniciar el entorno a un estado inicial
@@ -208,11 +208,6 @@ class envRL(gym.Env):
 
     def _get_observation(self):
         return {
-             'anim_dict': {
-                    0: self.env_var.anim_dict[0],
-                    5: self.env_var.anim_dict[5],
-                    6: self.env_var.anim_dict[6]
-                },
             'last_action': self.previous_action,
             'open_monitor': int(self.env_var.open_monitor),
             'num_camera': self.env_var.num_camera,
@@ -224,5 +219,5 @@ class envRL(gym.Env):
             'flashlight': int(self.env_var.flashlight),
             'puppet_sin_tiempo':int(pygame.time.get_ticks()- self.no_defense_puppet<=10000),
             'en_peligro': int((len(self.env_var.anim_dict[0])>0 or len(self.env_var.anim_dict[5])>0 or len(self.env_var.anim_dict[6])>0)),
-
+            'foxy_en_pasillo': int('withered_foxy' in self.env_var.anim_dict[0])
         }

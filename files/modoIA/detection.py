@@ -44,7 +44,7 @@ class Detection:
     def run_detection(self):
         while not self.stop_detection.is_set():
             self.detection()
-            time.sleep(0.02)
+            time.sleep(0.1)
            
            
 
