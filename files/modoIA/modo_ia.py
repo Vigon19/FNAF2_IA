@@ -38,7 +38,7 @@ class ModoIa:
         self.last_action_time = pygame.time.get_ticks()
     def train_model(self,App):
         
-        for i in range(1, 31):
+        for i in range(1, 51):
             done = False
             state = self.env.reset()
             
