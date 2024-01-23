@@ -4,5 +4,5 @@ Inteligencia artificial hecha sobre el repositorio open-source: https://github.c
 
 
 # Requirements:
-- Python 3.11 or above
+- Python 3.10.8 or above
 - Pygame 2.4.0
