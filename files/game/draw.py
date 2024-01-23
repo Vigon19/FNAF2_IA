@@ -9,7 +9,7 @@ def Draw(App):
 		else:
 			if App.ia_control and not App.finish_train:
 				
-				App.ia.train_model(App)
+				App.ia.run_model(App)
 				App.finish_train=True
 			else:
 				App.game.updater(App)
