@@ -24,7 +24,6 @@ class envRL(gym.Env):
             'right_vent': spaces.Discrete(2),
             'left_vent': spaces.Discrete(2),     
             'put_mask': spaces.Discrete(2),      
-            'jumpscare': spaces.Discrete(2),     
             'flashlight': spaces.Discrete(2),    
             'music_box': spaces.Discrete(2),
             'puppet_sin_tiempo': spaces.Discrete(2),
@@ -32,7 +31,7 @@ class envRL(gym.Env):
             'foxy_en_pasillo': spaces.Discrete(2),
            
         })
-        self.observation_size = 41
+        self.observation_size = 39
 
     def reset(self):
         # Reiniciar el entorno a un estado inicial
@@ -215,7 +214,6 @@ class envRL(gym.Env):
             'right_vent': int(self.env_var.right_vent),
             'left_vent': int(self.env_var.left_vent),
             'put_mask': int(self.env_var.put_mask),
-            'jumpscare': int(self.env_var.jumpscare),
             'flashlight': int(self.env_var.flashlight),
             'puppet_sin_tiempo':int(pygame.time.get_ticks()- self.no_defense_puppet<=10000),
             'en_peligro': int((len(self.env_var.anim_dict[0])>0 or len(self.env_var.anim_dict[5])>0 or len(self.env_var.anim_dict[6])>0)),

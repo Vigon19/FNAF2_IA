@@ -2,11 +2,11 @@ import pygame
 
 class GameTimer:
     def __init__(self, App):
-        self.time = 5
+        self.time = 12
         self.position = [App.dimentions[0] - 105, 25]
         self.ticks = pygame.time.get_ticks()
         self.night = App.menu.nightToPlay
-        self.hour = 10_000# 70 seconds
+        self.hour = 70_000# 70 seconds
 
     def update(self, App, update_time=True):
         self.draw_night_label(App)

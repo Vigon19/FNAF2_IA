@@ -166,5 +166,7 @@ class ModoIa:
                     # Realizar cualquier otra cosa que necesites con la salida del modelo
                     print(f"Acción: {action}, Recompensa: {reward}, Terminado: {done}")
                     self.last_action_time = current_time
-          
+            if App.finish_train and not App.objects.gameTimer.time == 6:
+                print("-------------------NO CONSEGUIDO-------------------")
+                App.options.set_finish(False)
             if App.finish_train or App.objects.gameTimer.time == 6: break

@@ -10,7 +10,9 @@ dict/
 # Sprites / Sounds / Fonts stuff (leave only the code)
 # sounds/
 # sprites/
-
+.venv/
+.git/
+*.code-workspace
 # # Save file
 # files/utils.txt
 # files/save/key.py

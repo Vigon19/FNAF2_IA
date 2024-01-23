@@ -66,7 +66,7 @@ class ActionsManager:
         self.start_action_timer("defense_normal")
         self.pause_timers('defense_normal')
         self.turn_off_light()
-        self.env_action.log=f"DEFENSA NORMAL: {self.env_action.anim_dict[0]}"
+        self.env_action.log=f"DEFENSA NORMAL: Oficina {self.env_action.anim_dict[0]}  Ventilación I {self.env_action.anim_dict[5]} Ventilación D {self.env_action.anim_dict[6]}"
         # Lógica específica para la defensa normal
         self.env_action.music_box = False
         self.env_action.num_camera = 0

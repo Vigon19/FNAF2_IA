@@ -8,7 +8,7 @@ from files.game.game_objects import GameObjects
 from files.game.game_controller import Game
 from files.menu.menu import Menu
 from files.save.save import save, read
-from files.menu.Options import Options
+from files.menu.options import Options
 from multiprocessing import Process, Queue
 from files.modoIA.modo_ia import ModoIa
 

@@ -13,13 +13,11 @@ class Options:
         self.intro_state=-1
         self.introduccion_proyecto = pygame.image.load("sprites/menu/logos/intro_proyecto_2.png").convert_alpha()
     def update(self, App):
-        print("-----AQUI----")
         dims = App.options_image.get_rect()
         dims_proyecto = App.introduccion_proyecto.get_rect()
         App.options_image.set_alpha(self.alpha)
 
         if App.loaded:
-            print("-----App.loaded----")
             App.surface.blit(App.options_image, (App.dimentions[0]/2 - dims.w/2, App.dimentions[1]/2 - dims.h/2))
             keys = pygame.key.get_pressed()
             if keys[pygame.K_1]:
